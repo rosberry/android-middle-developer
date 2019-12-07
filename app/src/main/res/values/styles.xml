@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
+        <item name="android:windowBackground">@drawable/ic_launcher_background</item>
+    </style>
+    <style name="MainScreenTheme" parent="AppTheme">
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
 
 </resources>
