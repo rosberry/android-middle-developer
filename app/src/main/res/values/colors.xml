@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_primary">#414141</color>
-    <color name="color_primary_dark">#1D1D1D</color>
-    <color name="color_accent">#880016</color>
-    <color name="color_gray_dark">#4c4c4c</color>
-    <color name="color_gray">#8D8C8C</color>
-    <color name="color_gray_light">#dedede</color>
+    <color name="colorPrimary">#414141</color>
+    <color name="colorPrimaryDark">#1D1D1D</color>
+    <color name="colorAccent">#880016</color>
+    <color name="colorGrayDark">#4c4c4c</color>
+    <color name="colorGray">#8D8C8C</color>
+    <color name="colorGrayLight">#dedede</color>
 
 
     <color name="stark_primary">#414141</color>

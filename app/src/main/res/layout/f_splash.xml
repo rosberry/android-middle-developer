@@ -8,4 +8,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         app:srcCompat="@mipmap/spash" />
+
+    <ProgressBar
+        android:id="@+id/progressCircular"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminateTint="@color/colorGrayLight"
+        android:layout_marginBottom="32dp"
+        android:layout_gravity="bottom|center_horizontal"
+        />
 </FrameLayout>
