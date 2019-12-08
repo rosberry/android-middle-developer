@@ -7,7 +7,7 @@ import ru.skillbranch.di.root.RootComponent
 /**
  * @author neestell on 2019-12-08.
  */
-class DI {
+object DI {
 
     private var rootComponent: RootComponent? = null
 
