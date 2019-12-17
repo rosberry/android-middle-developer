@@ -11,7 +11,7 @@ import javax.inject.Singleton
  * @author neestell on 2019-12-08.
  */
 @Singleton
-@Component(modules = [NetworkModule::class])
+@Component()
 interface RootComponent {
 
     fun inject(activity: MainActivity)

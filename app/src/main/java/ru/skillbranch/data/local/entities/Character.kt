@@ -1,18 +1,23 @@
 package ru.skillbranch.data.local.entities
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class Character(
-    val id: String,
-    val name: String,
-    val gender: String,
-    val culture: String,
-    val born: String,
-    val died: String,
-    val titles: List<String> = listOf(),
-    val aliases: List<String> = listOf(),
-    val father: String, //rel
-    val mother: String, //rel
-    val spouse: String,
-    val houseId: String//rel
+        @PrimaryKey val id: String,
+        @ColumnInfo(name = "name") val name: String,
+        @ColumnInfo(name = "gender") val gender: String,
+        @ColumnInfo(name = "culture") val culture: String,
+        @ColumnInfo(name = "born") val born: String,
+        @ColumnInfo(name = "died") val died: String,
+        @ColumnInfo(name = "titles") val titles: List<String> = listOf(),
+        @ColumnInfo(name = "aliases") val aliases: List<String> = listOf(),
+        @ColumnInfo(name = "father")val father: String, //rel
+        @ColumnInfo(name = "mother") val mother: String, //rel
+        @ColumnInfo(name = "spouse") val spouse: String,
+        @ColumnInfo(name = "houseId") val houseId: String//rel
 )
 
 data class CharacterItem(
@@ -26,12 +31,12 @@ data class CharacterItem(
 data class CharacterFull(
     val id: String,
     val name: String,
-    val words: String,
+    val words: String, // house
     val born: String,
     val died: String,
     val titles: List<String>,
     val aliases: List<String>,
-    val house:String, //rel
+    val house:String, //rel load
     val father: RelativeCharacter?,
     val mother: RelativeCharacter?
 )
