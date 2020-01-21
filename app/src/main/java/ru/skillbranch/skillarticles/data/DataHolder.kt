@@ -22,13 +22,13 @@ object LocalDataHolder {
         GlobalScope.launch {
             if (isDalay) delay(2000)
             articleData.postValue(
-                ArticleData(
-                    title = "CoordinatorLayout Basic",
-                    category = "Android",
-                    categoryIcon = R.drawable.logo,
-                    date = Date(),
-                    author = "Skill-Branch"
-                )
+                    ArticleData(
+                            title = "CoordinatorLayout Basic",
+                            category = "Android",
+                            categoryIcon = R.drawable.logo,
+                            date = Date(),
+                            author = "Skill-Branch"
+                    )
             )
         }
         return articleData
@@ -38,7 +38,8 @@ object LocalDataHolder {
     fun findArticlePersonalInfo(articleId: String): LiveData<ArticlePersonalInfo?> {
         GlobalScope.launch {
             if (isDalay) delay(1000)
-            articleInfo.postValue(ArticlePersonalInfo(isBookmark = true))
+            articleInfo.postValue(
+                    ArticlePersonalInfo(isBookmark = true))
         }
         return articleInfo
     }
@@ -66,7 +67,8 @@ object NetworkDataHolder {
     fun loadArticleContent(articleId: String): LiveData<List<Any>?> {
         GlobalScope.launch {
             if (isDelay) delay(5000)
-            content.postValue(listOf(longText))
+            content.postValue(listOf(
+                    longText))
         }
         return content
     }
@@ -78,24 +80,24 @@ object NetworkDataHolder {
 }
 
 data class ArticleData(
-    val shareLink: String? = null,
-    val title: String? = null,
-    val category: String? = null,
-    val categoryIcon: Any? = null,
-    val date: Date,
-    val author: Any? = null,
-    val poster: String? = null,
-    val content: List<Any> = emptyList()
+        val shareLink: String? = null,
+        val title: String? = null,
+        val category: String? = null,
+        val categoryIcon: Any? = null,
+        val date: Date,
+        val author: Any? = null,
+        val poster: String? = null,
+        val content: List<Any> = emptyList()
 )
 
 data class ArticlePersonalInfo(
-    val isLike: Boolean = false,
-    val isBookmark: Boolean = false
+        val isLike: Boolean = false,
+        val isBookmark: Boolean = false
 )
 
 data class AppSettings(
-    val isDarkMode: Boolean = false,
-    val isBigText: Boolean = false
+        val isDarkMode: Boolean = false,
+        val isBigText: Boolean = false
 )
 
 val longText: String = """

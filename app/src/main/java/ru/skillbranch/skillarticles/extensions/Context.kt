@@ -8,19 +8,20 @@ import android.util.TypedValue
 
 fun Context.dpToPx(dp: Int): Float {
     return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        dp.toFloat(),
-        this.resources.displayMetrics
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            this.resources.displayMetrics
 
     )
 }
 
 fun Context.dpToIntPx(dp: Int): Int {
     return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        dp.toFloat(),
-        this.resources.displayMetrics
-    ).toInt()
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            this.resources.displayMetrics
+    )
+        .toInt()
 }
 
 val Context.isNetworkAvailable: Boolean
@@ -30,7 +31,7 @@ val Context.isNetworkAvailable: Boolean
             cm.activeNetwork?.run {
                 val nc = cm.getNetworkCapabilities(this)
                 nc!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || nc.hasTransport(
-                    NetworkCapabilities.TRANSPORT_WIFI
+                        NetworkCapabilities.TRANSPORT_WIFI
                 )
             } ?: false
         } else {

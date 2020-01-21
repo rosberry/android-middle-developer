@@ -66,7 +66,8 @@ abstract class BaseViewModel<T>(initState: T) : ViewModel() {
      * реализует данное поведение с помощью EventObserver
      */
     fun observeNotifications(owner: LifecycleOwner, onNotify: (notification: Notify) -> Unit) {
-        notifications.observe(owner, EventObserver { onNotify(it) })
+        notifications.observe(owner,
+                EventObserver { onNotify(it) })
     }
 
     /***
@@ -75,8 +76,8 @@ abstract class BaseViewModel<T>(initState: T) : ViewModel() {
      * изменяет его и возвращает модифицированное состояние, которое устанавливается как текущее
      */
     protected fun <S> subscribeOnDataSource(
-        source: LiveData<S>,
-        onChanged: (newValue: S, currentState: T) -> T?
+            source: LiveData<S>,
+            onChanged: (newValue: S, currentState: T) -> T?
     ) {
         state.addSource(source) {
             state.value = onChanged(it, currentState) ?: return@addSource
@@ -120,9 +121,10 @@ class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Obser
     override fun onChanged(event: Event<E>?) {
         //если есть необработанное событие (контент) передай в качестве аргумента в лямбду
         // onEventUnhandledContent
-        event?.getContentIfNotHandled()?.let {
-            onEventUnhandledContent(it)
-        }
+        event?.getContentIfNotHandled()
+            ?.let {
+                onEventUnhandledContent(it)
+            }
     }
 }
 
@@ -130,14 +132,14 @@ sealed class Notify(val message: String) {
     data class TextMessage(val msg: String) : Notify(msg)
 
     data class ActionMessage(
-        val msg: String,
-        val actionLabel: String,
-        val actionHandler: (() -> Unit)
+            val msg: String,
+            val actionLabel: String,
+            val actionHandler: (() -> Unit)
     ) : Notify(msg)
 
     data class ErrorMessage(
-        val msg: String,
-        val errLabel: String?,
-        val errHandler: (() -> Unit)?
+            val msg: String,
+            val errLabel: String?,
+            val errHandler: (() -> Unit)?
     ) : Notify(msg)
 }

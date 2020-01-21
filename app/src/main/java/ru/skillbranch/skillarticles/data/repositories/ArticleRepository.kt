@@ -14,6 +14,7 @@ object ArticleRepository {
     fun loadArticleContent(articleId: String): LiveData<List<Any>?> {
         return network.loadArticleContent(articleId) //5s delay from network
     }
+
     fun getArticle(articleId: String): LiveData<ArticleData?> {
         return local.findArticle(articleId) //2s delay from db
     }
