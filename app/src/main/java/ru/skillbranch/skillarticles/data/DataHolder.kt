@@ -10,11 +10,15 @@ import ru.skillbranch.skillarticles.R
 import java.util.Date
 
 object LocalDataHolder {
+
     private var isDalay = true
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val articleData = MutableLiveData<ArticleData?>(null)
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val articleInfo = MutableLiveData<ArticlePersonalInfo?>(null)
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val settings = MutableLiveData(AppSettings())
 
@@ -45,6 +49,7 @@ object LocalDataHolder {
     }
 
     fun getAppSettings() = settings
+
     fun updateAppSettings(appSettings: AppSettings) {
         settings.value = appSettings
     }
@@ -60,6 +65,7 @@ object LocalDataHolder {
 }
 
 object NetworkDataHolder {
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val content = MutableLiveData<List<Any>?>(null)
     private var isDelay = true

@@ -8,6 +8,7 @@ import ru.skillbranch.skillarticles.data.LocalDataHolder
 import ru.skillbranch.skillarticles.data.NetworkDataHolder
 
 object ArticleRepository {
+
     private val local = LocalDataHolder
     private val network = NetworkDataHolder
 
@@ -24,6 +25,7 @@ object ArticleRepository {
     }
 
     fun getAppSettings(): LiveData<AppSettings> = local.getAppSettings() //from preferences
+
     fun updateSettings(appSettings: AppSettings) {
         local.updateAppSettings(appSettings)
     }
