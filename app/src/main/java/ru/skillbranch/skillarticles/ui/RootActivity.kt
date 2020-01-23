@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles
+package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
 import android.view.Menu
@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import kotlinx.android.synthetic.main.layout_submenu.*
+import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
@@ -48,7 +49,8 @@ class RootActivity : AppCompatActivity() {
         val searchView = searchItem?.actionView as SearchView
         searchView.queryHint = getString(R.string.hintSearch)
 
-        val textView = searchView.findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)
+        val textView = searchView.findViewById<SearchView.SearchAutoComplete>(
+                R.id.search_src_text)
         textView.setTextColor(getColor(R.color.color_on_surface))
 
         if (viewModel.currentState.isSearch) {
@@ -133,7 +135,8 @@ class RootActivity : AppCompatActivity() {
             is Notify.TextMessage -> { /* no-op */}
             is Notify.ActionMessage -> {
                 with(snackbar) {
-                    setActionTextColor(getColor(R.color.color_accent_dark))
+                    setActionTextColor(getColor(
+                            R.color.color_accent_dark))
                     setAction(notify.actionLabel) {
                         notify.actionHandler()
                     }
@@ -141,7 +144,8 @@ class RootActivity : AppCompatActivity() {
             }
             is Notify.ErrorMessage -> {
                 with(snackbar) {
-                    setBackgroundTint(getColor(R.color.design_default_color_error))
+                    setBackgroundTint(getColor(
+                            R.color.design_default_color_error))
                     setTextColor(getColor(android.R.color.white))
                     setActionTextColor(getColor(android.R.color.white))
                     setAction(notify.errLabel) {
