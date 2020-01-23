@@ -1,9 +1,12 @@
 package ru.skillbranch.skillarticles
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
@@ -36,6 +39,48 @@ class RootActivity : AppCompatActivity() {
         viewModel.observeNotifications(this) {
             renderNotification(it)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.article_menu, menu)
+
+        val searchItem = menu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.queryHint = getString(R.string.hintSearch)
+
+        val textView = searchView.findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)
+        textView.setTextColor(getColor(R.color.color_on_surface))
+
+        if (viewModel.currentState.isSearch) {
+            searchItem.expandActionView()
+            searchView.setQuery(viewModel.currentState.searchQuery, false)
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.handleSearch(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.handleSearch(newText)
+                return true
+            }
+        })
+
+        searchItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                viewModel.handleSearchMode(true)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                viewModel.handleSearchMode(false)
+                return true
+            }
+        })
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun setupSubmenu() {
