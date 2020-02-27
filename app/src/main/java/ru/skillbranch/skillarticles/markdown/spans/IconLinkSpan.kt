@@ -11,14 +11,14 @@ import androidx.annotation.Px
 import androidx.annotation.VisibleForTesting
 
 class IconLinkSpan(
-    private val linkDrawable: Drawable,
-    @ColorInt
-    private val iconColor: Int,
-    @Px
-    private val padding: Float,
-    @ColorInt
-    private val textColor: Int,
-    dotWidth: Float = 6f
+        private val linkDrawable: Drawable,
+        @ColorInt
+        private val iconColor: Int,
+        @Px
+        private val padding: Float,
+        @ColorInt
+        private val textColor: Int,
+        dotWidth: Float = 6f
 ) : ReplacementSpan() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -30,22 +30,22 @@ class IconLinkSpan(
     var path = Path()
 
     override fun draw(
-        canvas: Canvas,
-        text: CharSequence,
-        start: Int,
-        end: Int,
-        x: Float,
-        top: Int,
-        y: Int,
-        bottom: Int,
-        paint: Paint
+            canvas: Canvas,
+            text: CharSequence,
+            start: Int,
+            end: Int,
+            x: Float,
+            top: Int,
+            y: Int,
+            bottom: Int,
+            paint: Paint
     ) {
         val textStart = x + iconSize + padding
-        paint.forLine{
+        paint.forLine {
             path.reset()
             path.moveTo(textStart, bottom.toFloat())
             path.lineTo(textStart + textWidth, bottom.toFloat())
-            canvas.drawPath(path,paint)
+            canvas.drawPath(path, paint)
         }
 
         paint.forIcon {
@@ -63,16 +63,16 @@ class IconLinkSpan(
 
 
     override fun getSize(
-        paint: Paint,
-        text: CharSequence?,
-        start: Int,
-        end: Int,
-        fm: Paint.FontMetricsInt?
+            paint: Paint,
+            text: CharSequence?,
+            start: Int,
+            end: Int,
+            fm: Paint.FontMetricsInt?
     ): Int {
 
-        if(fm!=null){
+        if (fm != null) {
             iconSize = fm.descent - fm.ascent //fontSize
-            linkDrawable.setBounds(0,0,iconSize, iconSize)
+            linkDrawable.setBounds(0, 0, iconSize, iconSize)
             linkDrawable.setTint(iconColor)
         }
         textWidth = paint.measureText(text.toString(), start, end)

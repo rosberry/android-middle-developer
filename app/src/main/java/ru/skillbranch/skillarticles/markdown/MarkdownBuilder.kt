@@ -23,6 +23,7 @@ import ru.skillbranch.skillarticles.markdown.spans.OrderedListSpan
 import ru.skillbranch.skillarticles.markdown.spans.UnorderedListSpan
 
 class MarkdownBuilder(context: Context) {
+
     private val colorSecondary = context.attrValue(R.attr.colorSecondary)
     private val colorPrimary = context.attrValue(R.attr.colorPrimary)
     private val colorDivider = context.getColor(R.color.color_divider)
