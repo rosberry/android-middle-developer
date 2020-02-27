@@ -70,9 +70,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                     SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-
-        // scroll to first searched element
-        renderSearchPosition(0)
     }
 
     override fun renderSearchPosition(searchPosition: Int) {
@@ -170,11 +167,13 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
         btn_result_up.setOnClickListener {
             if (search_view?.hasFocus() == true) search_view.clearFocus()
+            if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
             viewModel.handleUpResult()
         }
 
         btn_result_down.setOnClickListener {
             if (search_view?.hasFocus() == true) search_view.clearFocus()
+            if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
             viewModel.handleDownResult()
         }
 
@@ -312,7 +311,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             if (data.title != null) title = data.title
             if (data.category != null) category = data.category
             if (data.categoryIcon != null) categoryIcon = data.categoryIcon as Int
-            if (data.content.isNotEmpty()) content = data.content.first() as String
+            if (data.content != null) content = data.content
 
             isLoadingContent = data.isLoadingContent
             isSearch = data.isSearch
