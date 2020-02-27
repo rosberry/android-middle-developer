@@ -1,10 +1,12 @@
 package ru.skillbranch.skillarticles.extensions
 
 import android.content.Context
+import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.TypedValue
+import androidx.annotation.AttrRes
 
 fun Context.dpToPx(dp: Int): Float {
     return TypedValue.applyDimension(
@@ -20,8 +22,7 @@ fun Context.dpToIntPx(dp: Int): Int {
             TypedValue.COMPLEX_UNIT_DIP,
             dp.toFloat(),
             this.resources.displayMetrics
-    )
-        .toInt()
+    ).toInt()
 }
 
 val Context.isNetworkAvailable: Boolean
@@ -38,3 +39,11 @@ val Context.isNetworkAvailable: Boolean
             cm.activeNetworkInfo?.run { isConnectedOrConnecting } ?: false
         }
     }
+
+fun Context.attrValue(@AttrRes res: Int) : Int {
+    val value : Int?
+    val tv = TypedValue()
+    if (this.theme.resolveAttribute(res, tv, true)) value = tv.data
+    else throw Resources.NotFoundException("Resource with id $res not found")
+    return value
+}
