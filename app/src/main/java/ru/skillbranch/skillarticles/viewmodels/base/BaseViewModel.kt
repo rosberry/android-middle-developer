@@ -66,8 +66,7 @@ abstract class BaseViewModel<T : IViewModelState>(initState: T) : ViewModel() {
      * реализует данное поведение с помощью EventObserver
      */
     fun observeNotifications(owner: LifecycleOwner, onNotify: (notification: Notify) -> Unit) {
-        notifications.observe(owner,
-            EventObserver { onNotify(it) })
+        notifications.observe(owner, EventObserver { onNotify(it) })
     }
 
     /***
@@ -76,20 +75,20 @@ abstract class BaseViewModel<T : IViewModelState>(initState: T) : ViewModel() {
      * изменяет его и возвращает модифицированное состояние, которое устанавливается как текущее
      */
     protected fun <S> subscribeOnDataSource(
-        source: LiveData<S>,
-        onChanged: (newValue: S, currentState: T) -> T?
+            source: LiveData<S>,
+            onChanged: (newValue: S, currentState: T) -> T?
     ) {
         state.addSource(source) {
             state.value = onChanged(it, currentState) ?: return@addSource
         }
     }
 
-    fun saveState(outState: Bundle){
+    fun saveState(outState: Bundle) {
         currentState.save(outState)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun restoreState(savedState:Bundle){
+    fun restoreState(savedState: Bundle) {
         state.value = currentState.restore(savedState) as T
     }
 
@@ -121,25 +120,27 @@ class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Obser
     override fun onChanged(event: Event<E>?) {
         //если есть необработанное событие (контент) передай в качестве аргумента в лямбду
         // onEventUnhandledContent
-        event?.getContentIfNotHandled()?.let {
-            onEventUnhandledContent(it)
-        }
+        event?.getContentIfNotHandled()
+            ?.let {
+                onEventUnhandledContent(it)
+            }
     }
 }
 
-sealed class Notify() {
+sealed class Notify {
     abstract val message: String
+
     data class TextMessage(override val message: String) : Notify()
 
     data class ActionMessage(
-        override val message: String,
-        val actionLabel: String,
-        val actionHandler: (() -> Unit)
+            override val message: String,
+            val actionLabel: String,
+            val actionHandler: (() -> Unit)
     ) : Notify()
 
     data class ErrorMessage(
-        override val message: String,
-        val errLabel: String?,
-        val errHandler: (() -> Unit)?
+            override val message: String,
+            val errLabel: String?,
+            val errHandler: (() -> Unit)?
     ) : Notify()
 }

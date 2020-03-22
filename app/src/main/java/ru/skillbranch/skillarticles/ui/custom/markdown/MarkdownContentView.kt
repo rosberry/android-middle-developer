@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.ViewCompat
@@ -16,9 +15,9 @@ import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 import kotlin.properties.Delegates
 
 class MarkdownContentView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private lateinit var elements: List<MarkdownElement>
 
@@ -58,17 +57,17 @@ class MarkdownContentView @JvmOverloads constructor(
         children.forEach {
             if (it is MarkdownTextView) {
                 it.layout(
-                    left - paddingLeft / 2,
-                    usedHeight,
-                    r - paddingRight / 2,
-                    usedHeight + it.measuredHeight
+                        left - paddingLeft / 2,
+                        usedHeight,
+                        r - paddingRight / 2,
+                        usedHeight + it.measuredHeight
                 )
             } else {
                 it.layout(
-                    left,
-                    usedHeight,
-                    right,
-                    usedHeight + it.measuredHeight
+                        left,
+                        usedHeight,
+                        right,
+                        usedHeight + it.measuredHeight
                 )
             }
             usedHeight += it.measuredHeight
@@ -83,8 +82,8 @@ class MarkdownContentView @JvmOverloads constructor(
                     val tv = MarkdownTextView(context, textSize).apply {
 
                         setPaddingOptionally(
-                            left = padding,
-                            right = padding
+                                left = padding,
+                                right = padding
                         )
                         setLineSpacing(fontSize * 0.5f, 1f)
                     }
@@ -100,20 +99,20 @@ class MarkdownContentView @JvmOverloads constructor(
 
                 is MarkdownElement.Image -> {
                     val iv = MarkdownImageView(
-                        context,
-                        textSize,
-                        it.image.url,
-                        it.image.text,
-                        it.image.alt
+                            context,
+                            textSize,
+                            it.image.url,
+                            it.image.text,
+                            it.image.alt
                     )
                     addView(iv)
                 }
 
                 is MarkdownElement.Scroll -> {
                     val sv = MarkdownCodeView(
-                        context,
-                        textSize,
-                        it.blockCode.text
+                            context,
+                            textSize,
+                            it.blockCode.text
                     )
                     addView(sv)
                 }
@@ -141,7 +140,7 @@ class MarkdownContentView @JvmOverloads constructor(
     }
 
     fun renderSearchPosition(
-        searchPosition: Pair<Int, Int>?
+            searchPosition: Pair<Int, Int>?
     ) {
         searchPosition ?: return
         val bounds = elements.map { it.bounds }
@@ -171,8 +170,7 @@ class MarkdownContentView @JvmOverloads constructor(
     }
 
     override fun onSaveInstanceState(): Parcelable? {
-        val savedState =
-            SavedState(super.onSaveInstanceState())
+        val savedState = SavedState(super.onSaveInstanceState())
         if (ids.isEmpty()) {
             children.forEach {
                 it.id = ViewCompat.generateViewId()
@@ -180,7 +178,6 @@ class MarkdownContentView @JvmOverloads constructor(
             }
         }
         savedState.ssIds = ids
-        Log.e("MarkdownContentView", "PARENT SAVE INSTANT STATE: ");
         return savedState
     }
 
@@ -192,7 +189,6 @@ class MarkdownContentView @JvmOverloads constructor(
                 view.id = ids[index]
             }
         }
-        Log.e("MarkdownContentView", "PARENT RESTORE FROM INSTANT STATE: ");
     }
 
 
@@ -203,12 +199,10 @@ class MarkdownContentView @JvmOverloads constructor(
 
         @Suppress("UNCHECKED_CAST")
         constructor(src: Parcel) : super(src) {
-            //restore state from parcel
             ssIds = src.readArrayList(Int::class.java.classLoader) as ArrayList<Int>
         }
 
         override fun writeToParcel(dst: Parcel, flags: Int) {
-            //write state to parcel
             super.writeToParcel(dst, flags)
             dst.writeIntArray(ssIds.toIntArray())
         }
@@ -216,9 +210,7 @@ class MarkdownContentView @JvmOverloads constructor(
         override fun describeContents() = 0
 
         companion object CREATOR : Parcelable.Creator<SavedState> {
-            override fun createFromParcel(parcel: Parcel) =
-                SavedState(parcel)
-
+            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
             override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
         }
     }

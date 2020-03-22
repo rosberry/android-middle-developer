@@ -2,7 +2,6 @@ package ru.skillbranch.skillarticles.extensions
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -13,22 +12,32 @@ import androidx.annotation.AttrRes
 
 fun Context.dpToPx(dp: Int): Float {
     return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        dp.toFloat(),
-        this.resources.displayMetrics
-
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            this.resources.displayMetrics
     )
 }
 
 fun Context.dpToIntPx(dp: Int): Int {
     return TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        dp.toFloat(),
-        this.resources.displayMetrics
-    ).toInt()
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            this.resources.displayMetrics
+    )
+        .toInt()
 }
 
-fun Context.hideKeyboard(view: View){
+fun Context.attrValue(@AttrRes id: Int): Int {
+    val value = TypedValue()
+    if (theme.resolveAttribute(id, value, true)) {
+        value.data
+        return value.data
+    } else {
+        error("can not attribute for : $id")
+    }
+}
+
+fun Context.hideKeyboard(view: View) {
     val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
@@ -40,18 +49,10 @@ val Context.isNetworkAvailable: Boolean
             cm.activeNetwork?.run {
                 val nc = cm.getNetworkCapabilities(this)
                 nc!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || nc.hasTransport(
-                    NetworkCapabilities.TRANSPORT_WIFI
+                        NetworkCapabilities.TRANSPORT_WIFI
                 )
             } ?: false
         } else {
             cm.activeNetworkInfo?.run { isConnectedOrConnecting } ?: false
         }
     }
-
-fun Context.attrValue(@AttrRes res: Int) : Int {
-    val value : Int?
-    val tv = TypedValue()
-    if (this.theme.resolveAttribute(res, tv, true)) value = tv.data
-    else throw Resources.NotFoundException("Resource with id $res not found")
-    return value
-}

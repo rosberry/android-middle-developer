@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
-
     <ru.skillbranch.skillarticles.ui.custom.CheckableImageView
         android:id="@+id/btn_like"
         style="@style/BottombarIcon"
@@ -75,7 +74,7 @@
             android:id="@+id/tv_search_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:text="Not found"
             android:layout_gravity="center_vertical"
             android:textColor="?attr/colorPrimary"

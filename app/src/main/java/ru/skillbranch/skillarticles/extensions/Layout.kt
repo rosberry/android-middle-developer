@@ -40,7 +40,7 @@ fun Layout.getLineBottomWithoutSpacing(line: Int): Int {
     val lineBottom = getLineBottom(line)
     val isLastLine = line == lineCount.dec()
     val hasLineSpacing = spacingAdd != 0f
-     return if (!hasLineSpacing || isLastLine) {
+    return if (!hasLineSpacing || isLastLine) {
         lineBottom + spacingAdd.toInt()
     } else {
         lineBottom - spacingAdd.toInt()

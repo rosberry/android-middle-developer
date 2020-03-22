@@ -7,12 +7,13 @@ import androidx.annotation.AttrRes
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class AttrValue(@AttrRes private val res:Int) : ReadOnlyProperty<Context, Int> {
-    private var value : Int? = null
+class AttrValue(@AttrRes private val res: Int) : ReadOnlyProperty<Context, Int> {
+    private var value: Int? = null
+
     override fun getValue(thisRef: Context, property: KProperty<*>): Int {
-        if(value == null){
-            val tv = TypedValue()
-            if(thisRef.theme.resolveAttribute(res, tv, true)) value = tv.data
+        if (value == null) {
+            val typedValue = TypedValue()
+            if (thisRef.theme.resolveAttribute(res, typedValue, true)) value = typedValue.data
             else throw Resources.NotFoundException("Resource with id $res not found")
         }
         return value!!
