@@ -7,24 +7,29 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewAnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.google.android.material.shape.MaterialShapeDrawable
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToPx
+import ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior
 import kotlin.math.hypot
 
 class ArticleSubmenu @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
-
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) , CoordinatorLayout.AttachedBehavior {
+    override fun getBehavior(): CoordinatorLayout.Behavior<ArticleSubmenu> {
+        return SubmenuBehavior()
+    }
     var isOpen = false
     private var centerX: Float = context.dpToPx(200)
     private var centerY: Float = context.dpToPx(96)
 
     init {
+        requestLayout()
         View.inflate(context, R.layout.layout_submenu, this)
         //add material bg for handle elevation and color surface
         val materialBg = MaterialShapeDrawable.createWithElevationOverlay(context)
@@ -47,11 +52,11 @@ class ArticleSubmenu @JvmOverloads constructor(
     private fun animatedShow() {
         val endRadius = hypot(centerX, centerY).toInt()
         val anim = ViewAnimationUtils.createCircularReveal(
-                this,
-                centerX.toInt(),
-                centerY.toInt(),
-                0f,
-                endRadius.toFloat()
+            this,
+            centerX.toInt(),
+            centerY.toInt(),
+            0f,
+            endRadius.toFloat()
         )
         anim.doOnStart {
             visibility = View.VISIBLE
@@ -62,11 +67,11 @@ class ArticleSubmenu @JvmOverloads constructor(
     private fun animatedHide() {
         val endRadius = hypot(centerX, centerY).toInt()
         val anim = ViewAnimationUtils.createCircularReveal(
-                this,
-                centerX.toInt(),
-                centerY.toInt(),
-                endRadius.toFloat(),
-                0f
+            this,
+            centerX.toInt(),
+            centerY.toInt(),
+            endRadius.toFloat(),
+            0f
         )
         anim.doOnEnd {
             visibility = View.GONE
@@ -76,8 +81,7 @@ class ArticleSubmenu @JvmOverloads constructor(
 
     //save state
     override fun onSaveInstanceState(): Parcelable? {
-        val savedState = SavedState(
-                super.onSaveInstanceState())
+        val savedState = SavedState(super.onSaveInstanceState())
         savedState.ssIsOpen = isOpen
         return savedState
     }
@@ -108,9 +112,7 @@ class ArticleSubmenu @JvmOverloads constructor(
         override fun describeContents() = 0
 
         companion object CREATOR : Parcelable.Creator<SavedState> {
-            override fun createFromParcel(parcel: Parcel) =
-                    SavedState(parcel)
-
+            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
             override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
         }
     }

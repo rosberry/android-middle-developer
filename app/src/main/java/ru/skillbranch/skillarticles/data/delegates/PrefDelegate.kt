@@ -4,15 +4,12 @@ import ru.skillbranch.skillarticles.data.local.PrefManager
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-/**
- * @author mmikhailov on 27.02.2020.
- */
 class PrefDelegate<T>(private val defaultValue: T) {
     private var storedValue: T? = null
 
     operator fun provideDelegate(
-            thisRef: PrefManager,
-            prop: KProperty<*>
+        thisRef: PrefManager,
+        prop: KProperty<*>
     ): ReadWriteProperty<PrefManager, T?> {
         val key = prop.name
         return object : ReadWriteProperty<PrefManager, T?> {
@@ -48,4 +45,5 @@ class PrefDelegate<T>(private val defaultValue: T) {
 
         }
     }
+
 }

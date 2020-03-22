@@ -3,20 +3,30 @@ package ru.skillbranch.skillarticles.extensions
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.marginBottom
-import androidx.core.view.marginEnd
-import androidx.core.view.marginStart
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
 import androidx.core.view.marginTop
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updateMargins
 
-/**
- * @author mmikhailov on 2020-02-14.
- */
+fun View.setPaddingOptionally(
+    left:Int = paddingLeft,
+    top : Int = paddingTop,
+    right : Int = paddingRight,
+    bottom : Int = paddingBottom
+){
+    setPadding(left, top, right, bottom)
+}
+
 fun View.setMarginOptionally(
-        start: Int = marginStart,
-        top: Int = marginTop,
-        end: Int = marginEnd,
-        bottom: Int = marginBottom
-) {
-    this.updateLayoutParams<ViewGroup.MarginLayoutParams> { updateMargins(start, top, end, bottom) }
+    left:Int = marginLeft,
+    top : Int = marginTop,
+    right : Int = marginRight,
+    bottom : Int = marginBottom
+){
+    (layoutParams as? ViewGroup.MarginLayoutParams)?.run{
+        leftMargin = left
+        rightMargin = right
+        topMargin = top
+        bottomMargin = bottom
+    }
+    requestLayout()
 }

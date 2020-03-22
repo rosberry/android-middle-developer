@@ -18,13 +18,13 @@ object LocalDataHolder {
         GlobalScope.launch {
             delay(1000)
             articleData.postValue(
-                    ArticleData(
-                            title = "CoordinatorLayout Basic",
-                            category = "Android",
-                            categoryIcon = R.drawable.logo,
-                            date = Date(),
-                            author = "Skill-Branch"
-                    )
+                ArticleData(
+                    title = "CoordinatorLayout Basic",
+                    category = "Android",
+                    categoryIcon = R.drawable.logo,
+                    date = Date(),
+                    author = "Skill-Branch"
+                )
             )
         }
         return articleData
@@ -62,25 +62,25 @@ object NetworkDataHolder {
 }
 
 data class ArticleData(
-        val shareLink: String? = null,
-        val title: String? = null,
-        val category: String? = null,
-        val categoryIcon: Any? = null,
-        val date: Date,
-        val author: Any? = null,
-        val poster: String? = null,
-        val content: List<Any> = emptyList()
+    val shareLink: String? = null,
+    val title: String? = null,
+    val category: String? = null,
+    val categoryIcon: Any? = null,
+    val date: Date,
+    val author: Any? = null,
+    val poster: String? = null,
+    val content: List<Any> = emptyList()
 )
 
 data class ArticlePersonalInfo(
-        val isLike: Boolean = false,
-        val isBookmark: Boolean = false
+    val isLike: Boolean = false,
+    val isBookmark: Boolean = false
 )
 
 
 data class AppSettings(
-        val isDarkMode: Boolean = false,
-        val isBigText: Boolean = false
+    val isDarkMode: Boolean = false,
+    val isBigText: Boolean = false
 )
 
 val longText: String = """

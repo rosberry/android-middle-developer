@@ -17,11 +17,10 @@ import ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior
 import kotlin.math.hypot
 
 class Bottombar @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), CoordinatorLayout.AttachedBehavior {
-
     var isSearchMode = false
 
     override fun getBehavior(): CoordinatorLayout.Behavior<Bottombar> {
@@ -39,7 +38,6 @@ class Bottombar @JvmOverloads constructor(
     override fun onSaveInstanceState(): Parcelable? {
         val savedState = SavedState(super.onSaveInstanceState())
         savedState.ssIsSearchMode = isSearchMode
-
         return savedState
     }
 
@@ -55,9 +53,7 @@ class Bottombar @JvmOverloads constructor(
 
     fun setSearchState(search: Boolean) {
         if (isSearchMode == search || !isAttachedToWindow) return
-
         isSearchMode = search
-
         if (isSearchMode) animateShowSearchPanel()
         else animateHideSearchPanel()
     }
@@ -66,11 +62,11 @@ class Bottombar @JvmOverloads constructor(
         group_bottom.isVisible = true
         val endRadius = hypot(width.toFloat(), height / 2f)
         val va = ViewAnimationUtils.createCircularReveal(
-                reveal,
-                width,
-                height / 2,
-                endRadius,
-                0f
+            reveal,
+            width,
+            height / 2,
+            endRadius,
+            0f
         )
         va.doOnEnd { reveal.isVisible = false }
         va.start()
@@ -80,11 +76,11 @@ class Bottombar @JvmOverloads constructor(
         reveal.isVisible = true
         val endRadius = hypot(width.toFloat(), height / 2f)
         val va = ViewAnimationUtils.createCircularReveal(
-                reveal,
-                width,
-                height / 2,
-                0f,
-                endRadius
+            reveal,
+            width,
+            height / 2,
+            0f,
+            endRadius
         )
         va.doOnEnd { group_bottom.isVisible = false }
         va.start()
@@ -95,16 +91,16 @@ class Bottombar @JvmOverloads constructor(
             tv_search_result.text = "Not found"
             btn_result_up.isEnabled = false
             btn_result_down.isEnabled = false
-        } else {
+        }else{
             tv_search_result.text = "${position.inc()} of $searchCount"
             btn_result_up.isEnabled = true
             btn_result_down.isEnabled = true
         }
 
         //lock button presses in min/max positions
-        when (position) {
+        when(position){
             0 -> btn_result_up.isEnabled = false
-            searchCount - 1 -> btn_result_down.isEnabled = false
+            searchCount -1 -> btn_result_down.isEnabled = false
         }
     }
 
