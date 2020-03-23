@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles.data
+package ru.skillbranch.skillarticles.data.repositories
 
 import java.util.regex.Pattern
 
@@ -31,7 +31,8 @@ object MarkdownParser {
      */
     fun parse(string: String): List<MarkdownElement> {
         val elements = mutableListOf<Element>()
-        elements.addAll(findElements(string))
+        elements.addAll(
+                findElements(string))
         return elements.fold(mutableListOf()) { acc, element ->
             val last = acc.lastOrNull()
             when (element) {
@@ -276,7 +277,8 @@ object MarkdownParser {
                     text = string.subSequence(startIndex.plus(level.inc()), endIndex)
 
                     val element =
-                            Element.Header(level, text)
+                            Element.Header(level,
+                                    text)
                     parents.add(element)
                     lastStartIndex = endIndex
                 }
@@ -378,7 +380,8 @@ object MarkdownParser {
                 10 -> {
                     text = string.subSequence(startIndex.plus(3), endIndex.plus(-3))
                         .toString()
-                    val element = Element.BlockCode(text)
+                    val element = Element.BlockCode(
+                            text)
                     parents.add(element)
                     lastStartIndex = endIndex
                 }
@@ -392,7 +395,8 @@ object MarkdownParser {
                             string.subSequence(startIndex.plus(order.length.inc()), endIndex)
                                 .toString()
 
-                    val subs = findElements(text)
+                    val subs = findElements(
+                            text)
                     val element =
                             Element.OrderedListItem(
                                     order,
