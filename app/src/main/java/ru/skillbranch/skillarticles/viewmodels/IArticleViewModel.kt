@@ -3,7 +3,7 @@ package ru.skillbranch.skillarticles.viewmodels
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
-import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
+import ru.skillbranch.skillarticles.data.MarkdownElement
 
 interface IArticleViewModel {
     /**

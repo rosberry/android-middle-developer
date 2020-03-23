@@ -6,6 +6,8 @@ import ru.skillbranch.skillarticles.data.AppSettings
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.LocalDataHolder
+import ru.skillbranch.skillarticles.data.MarkdownElement
+import ru.skillbranch.skillarticles.data.MarkdownParser
 import ru.skillbranch.skillarticles.data.NetworkDataHolder
 
 object ArticleRepository {
