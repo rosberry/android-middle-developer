@@ -44,6 +44,8 @@ class MarkdownImageView private constructor(
         fontSize: Float
 ) : ViewGroup(context, null, 0), IMarkdownView {
 
+    private var aspectRatio: Float = 1f
+
     override var fontSize: Float = fontSize
         set(value) {
             tv_title.textSize = value * 0.75f
@@ -261,6 +263,7 @@ class MarkdownImageView private constructor(
     override fun onSaveInstanceState(): Parcelable? {
         val savedState = SavedState(super.onSaveInstanceState())
         savedState.ssIsOpen = isOpen
+        savedState.ssAspectRatio = iv_image.width.toFloat()/iv_image.height
         return savedState
     }
 
@@ -268,12 +271,14 @@ class MarkdownImageView private constructor(
         super.onRestoreInstanceState(state)
         if (state is SavedState) {
             isOpen = state.ssIsOpen
+            aspectRatio = state.ssAspectRatio
             tv_alt?.isVisible = isOpen
         }
     }
 
     private class SavedState : BaseSavedState, Parcelable {
         var ssIsOpen: Boolean = false
+        var ssAspectRatio: Float = 1f
 
         constructor(superState: Parcelable?) : super(superState)
 
