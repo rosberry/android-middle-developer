@@ -2,4 +2,8 @@
     <string name="app_name">Skill Articles</string>
     <string name="menu_title_search">Search</string>
     <string name="article_search_placeholder">Search</string>
+    <string name="title_articles">Articles</string>
+    <string name="title_bookmarks">Bookmarks</string>
+    <string name="title_transcriptions">Transcriptions</string>
+    <string name="title_profile">Profile</string>
 </resources>
