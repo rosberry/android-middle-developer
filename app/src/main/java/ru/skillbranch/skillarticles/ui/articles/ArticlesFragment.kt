@@ -29,9 +29,9 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
                 item.authorAvatar,
                 item.category,
                 item.categoryIcon,
-                item.date,
                 item.poster,
-                item.title
+                item.title,
+                item.date
         )
 
         findNavController().navigate(action)

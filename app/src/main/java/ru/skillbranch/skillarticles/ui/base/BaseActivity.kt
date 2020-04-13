@@ -202,6 +202,7 @@ class BottombarBuilder {
 
         with(context.nav_view) {
             isVisible = visible
+
             //show bottombar if hidden due to scroll behavior
             ((layoutParams as CoordinatorLayout.LayoutParams).behavior as HideBottomViewOnScrollBehavior)
                 .slideUp(this)

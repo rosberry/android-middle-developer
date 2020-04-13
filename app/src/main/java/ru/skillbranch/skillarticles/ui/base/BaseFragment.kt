@@ -15,6 +15,7 @@ import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 abstract class BaseFragment<T : BaseViewModel<out IViewModelState>> : Fragment() {
     val root: RootActivity
         get() = activity as RootActivity
+
     open val binding: Binding? = null
     protected abstract val viewModel: T
     protected abstract val layout: Int
