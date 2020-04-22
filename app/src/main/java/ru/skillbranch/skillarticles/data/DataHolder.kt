@@ -103,7 +103,7 @@ object LocalDataHolder {
     fun isAuth(): MutableLiveData<Boolean> = isAuth
 
     fun setAuth(auth: Boolean) {
-        isAuth.value = auth
+        isAuth.postValue(auth)
     }
 }
 
@@ -135,7 +135,8 @@ data class ArticleData(
         val date: Date,
         val author: Any? = null,
         val poster: String? = null,
-        val content: List<Any> = emptyList()
+        val content: List<Any> = emptyList(),
+        val commentsCount: Int = 0
 )
 
 data class ArticlePersonalInfo(
@@ -148,6 +149,7 @@ data class AppSettings(
         val isDarkMode: Boolean = false,
         val isBigText: Boolean = false
 )
+
 
 data class ArticleItemData(
         val id: String = "0",

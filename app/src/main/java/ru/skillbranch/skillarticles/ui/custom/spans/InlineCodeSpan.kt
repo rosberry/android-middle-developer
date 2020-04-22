@@ -19,10 +19,8 @@ class InlineCodeSpan(
         @Px
         private val padding: Float
 ) : ReplacementSpan() {
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var rect: RectF = RectF()
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var measureWidth: Int = 0
     lateinit var bounds: IntRange

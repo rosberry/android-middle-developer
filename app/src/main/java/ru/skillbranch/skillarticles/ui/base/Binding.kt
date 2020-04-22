@@ -9,10 +9,7 @@ abstract class Binding {
     val delegates = mutableMapOf<String, RenderProp<out Any>>()
     var isInflated = false
 
-    abstract fun bind(data: IViewModelState)
-
     open val afterInflated: (() -> Unit)? = null
-
     fun onFinishInflate() {
         if (!isInflated) {
             afterInflated?.invoke()
@@ -24,12 +21,20 @@ abstract class Binding {
         delegates.forEach { it.value.bind() }
     }
 
+    abstract fun bind(data: IViewModelState)
+
+    /**
+     * override this if need save binding in bundle
+     */
     open fun saveUi(outState: Bundle) {
-        // no-op by default
+        //empty default implementation
     }
 
+    /**
+     * override this if need restore binding from bundle
+     */
     open fun restoreUi(savedState: Bundle?) {
-        // no-op by default
+        //empty default implementation
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -51,4 +56,6 @@ abstract class Binding {
             }
         }
     }
+
+
 }

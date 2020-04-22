@@ -16,13 +16,11 @@ class OrderedListSpan(
         @ColorInt
         private val orderColor: Int
 ) : LeadingMarginSpan {
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    override fun getLeadingMargin(first: Boolean): Int {
-        return order.length.inc() * gapWidth.toInt()
-    }
 
-    private var offset: Int = 0
+    override fun getLeadingMargin(first: Boolean): Int {
+        return (order.length.inc() * gapWidth).toInt()
+    }
 
     override fun drawLeadingMargin(
             canvas: Canvas, paint: Paint, currentMarginLocation: Int, paragraphDirection: Int,
@@ -33,25 +31,21 @@ class OrderedListSpan(
             paint.withCustomColor {
                 canvas.drawText(
                         order,
-                        gapWidth + currentMarginLocation.toFloat(),
+                        currentMarginLocation + gapWidth,
                         lineBaseline.toFloat(),
                         paint
                 )
             }
-            offset = paint.measureText("$order ")
-                .toInt()
         }
     }
 
     private inline fun Paint.withCustomColor(block: () -> Unit) {
         val oldColor = color
-        val oldStyle = style
+
         color = orderColor
-        style = Paint.Style.FILL
 
         block()
 
         color = oldColor
-        style = oldStyle
     }
 }

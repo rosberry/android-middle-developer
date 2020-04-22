@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -31,6 +32,7 @@ import ru.skillbranch.skillarticles.extensions.setMarginOptionally
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.base.BottombarBuilder
+import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
 import ru.skillbranch.skillarticles.ui.base.ToolbarBuilder
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleState
@@ -39,30 +41,28 @@ import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
 class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
-
     private val args: ArticleFragmentArgs by navArgs()
-
     override val viewModel: ArticleViewModel by viewModels {
         ViewModelFactory(
                 owner = this,
-                params = "0"
+                params = args.articleId
         )
     }
 
-    override val layout = R.layout.fragment_article
-
-    override val binding by lazy { ArticleBinding() }
-
+    override val layout: Int = R.layout.fragment_article
+    override val binding: ArticleBinding by lazy { ArticleBinding() }
     override val prepareToolbar: (ToolbarBuilder.() -> Unit)? = {
         this.setTitle(args.title)
             .setSubtitle(args.category)
             .setLogo(args.categoryIcon)
-            .addMenuItem(ru.skillbranch.skillarticles.ui.base.MenuItemHolder(
+            .addMenuItem(
+                    MenuItemHolder(
                     "search",
                     R.id.action_search,
                     R.drawable.ic_search_black_24dp,
                     R.layout.search_view_layout
-            ))
+                    )
+            )
     }
 
     override val prepareBottombar: (BottombarBuilder.() -> Unit)? = {
@@ -73,7 +73,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
     private val bottombar
         get() = root.bottombar
-
     private val submenu
         get() = root.submenu
 
@@ -83,12 +82,13 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     }
 
     override fun setupViews() {
-        // window resize option
+        //window resize options
         root.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         setupBottombar()
         setupSubmenu()
 
+        //init views
         val avatarSize = root.dpToIntPx(40)
         val cornerRadius = root.dpToIntPx(8)
 
@@ -107,10 +107,9 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         tv_author.text = args.author
         tv_date.text = args.date.format()
 
-        et_comment.setOnEditorActionListener { v, _, _ ->
-            root.hideKeyboard(v)
+        et_comment.setOnEditorActionListener { view, _, _ ->
+            root.hideKeyboard(view)
             viewModel.handleSendComment()
-
             true
         }
     }
@@ -130,17 +129,20 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         scroll.setMarginOptionally(bottom = 0)
     }
 
+
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-
         val menuItem = menu.findItem(R.id.action_search)
-        val searchView = menuItem.actionView as SearchView
+        val searchView = (menuItem?.actionView as SearchView)
         searchView.queryHint = getString(R.string.article_search_placeholder)
 
-        if (binding.isSearching) {
+        //restore SearchView
+        if (binding.isSearch) {
             menuItem.expandActionView()
             searchView.setQuery(binding.searchQuery, false)
-            if (binding.isFocusedSearch) searchView.requestFocus() else searchView.clearFocus()
+
+            if (binding.isFocusedSearch) searchView.requestFocus()
+            else searchView.clearFocus()
         }
 
         menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
@@ -153,8 +155,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
                 viewModel.handleSearchMode(false)
                 return true
             }
-        })
 
+        })
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.handleSearch(query)
@@ -165,21 +167,22 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
                 viewModel.handleSearch(newText)
                 return true
             }
+
         })
     }
 
-    // Activity/Fragment получает информацию о том, что было совершено действие
-    // А затем поручает обработку ViewModel
     private fun setupSubmenu() {
         submenu.btn_text_up.setOnClickListener { viewModel.handleUpText() }
         submenu.btn_text_down.setOnClickListener { viewModel.handleDownText() }
         submenu.switch_mode.setOnClickListener { viewModel.handleNightMode() }
     }
 
-    // Activity/Fragment получает информацию о том, что было совершено действие
-    // А затем поручает обработку ViewModel
     private fun setupBottombar() {
-        bottombar.btn_like.setOnClickListener { viewModel.handleLike() }
+        val b = bottombar
+        bottombar.btn_like.setOnClickListener {
+            viewModel.handleLike()
+            Log.e("ArticleFragment", "bottombar click: ")
+        }
         bottombar.btn_bookmark.setOnClickListener { viewModel.handleBookmark() }
         bottombar.btn_share.setOnClickListener { viewModel.handleShare() }
         bottombar.btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
@@ -204,25 +207,26 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
     private fun setupCopyListener() {
         tv_text_content.setCopyListener { copy ->
-            val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Copied code", copy)
             clipboard.setPrimaryClip(clip)
             viewModel.handleCopyCode()
         }
     }
 
-    // inner - имеет доступ к полям и методам внешнего класса
     inner class ArticleBinding : Binding() {
-        var isFocusedSearch = false
-        var isSearching = false
+        var isFocusedSearch: Boolean = false
         var searchQuery: String? = null
 
-        private var isLoadingContent: Boolean by RenderProp(true)
+        private var isLoadingContent by RenderProp(true)
 
         private var isLike: Boolean by RenderProp(false) { bottombar.btn_like.isChecked = it }
-        private var isBookmark: Boolean by RenderProp(false) { bottombar.btn_bookmark.isChecked = it }
+        private var isBookmark: Boolean by RenderProp(false) {
+            bottombar.btn_bookmark.isChecked = it
+        }
         private var isShowMenu: Boolean by RenderProp(false) {
-            bottombar. btn_settings.isChecked = it
+            bottombar.btn_settings.isChecked = it
             if (it) submenu.open() else submenu.close()
         }
 
@@ -237,10 +241,10 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
                 submenu.btn_text_down.isChecked = true
             }
         }
-
-        private var isDarkMode: Boolean by RenderProp(false, needInit = false) {
+        private var isDarkMode: Boolean by RenderProp(false, false) {
             submenu.switch_mode.isChecked = it
-            root.delegate.localNightMode = if (it) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            root.delegate.localNightMode = if (it) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
         }
 
         var isSearch: Boolean by RenderProp(false) {
@@ -264,8 +268,10 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         private var searchPosition: Int by RenderProp(0)
 
         private var content: List<MarkdownElement> by RenderProp(emptyList()) {
+            //            tv_text_content.isLoading = it.isEmpty()
             tv_text_content.setContent(it)
             if (it.isNotEmpty()) setupCopyListener()
+
         }
 
         override val afterInflated: (() -> Unit)? = {
@@ -274,27 +280,27 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
                     ::isSearch,
                     ::searchResults,
                     ::searchPosition
-            ) { isLoadingContent, isSearch, searchResults, searchPosition ->
-                if (!isLoadingContent && isSearch) {
-                    tv_text_content.renderSearchResult(searchResults)
-                    tv_text_content.renderSearchPosition(searchResults.getOrNull(searchPosition))
+            ) { ilc, iss, sr, sp ->
+                if (!ilc && iss) {
+                    tv_text_content.renderSearchResult(sr)
+                    tv_text_content.renderSearchPosition(sr.getOrNull(sp))
                 }
-                if (!isLoadingContent && !isSearch) {
+                if (!ilc && !iss) {
                     tv_text_content.clearSearchResult()
                 }
 
-                bottombar.bindSearchInfo(searchResults.size, searchPosition)
+                bottombar.bindSearchInfo(sr.size, sp)
             }
         }
 
         override fun bind(data: IViewModelState) {
             data as ArticleState
+            Log.e("RootActivity", "bind expect: ${data.isDarkMode}")
             isLike = data.isLike
             isBookmark = data.isBookmark
             isShowMenu = data.isShowMenu
             isBigText = data.isBigText
             isDarkMode = data.isDarkMode
-
             content = data.content
 
             isLoadingContent = data.isLoadingContent
@@ -312,4 +318,5 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             isFocusedSearch = savedState?.getBoolean(::isFocusedSearch.name) ?: false
         }
     }
+
 }

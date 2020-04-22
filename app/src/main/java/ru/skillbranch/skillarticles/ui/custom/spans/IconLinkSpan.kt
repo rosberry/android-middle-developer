@@ -21,12 +21,9 @@ class IconLinkSpan(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var iconSize = 0
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var textWidth = 0f
-
     private val dashs = DashPathEffect(floatArrayOf(dotWidth, dotWidth), 0f)
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var path = Path()
 
@@ -60,6 +57,7 @@ class IconLinkSpan(
         }
     }
 
+
     override fun getSize(
             paint: Paint,
             text: CharSequence?,
@@ -75,6 +73,7 @@ class IconLinkSpan(
         textWidth = paint.measureText(text.toString(), start, end)
         return (iconSize + padding + textWidth).toInt()
     }
+
 
     private inline fun Paint.forLine(block: () -> Unit) {
         val oldColor = color

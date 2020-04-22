@@ -23,9 +23,9 @@ class BlockquotesSpan(
     ) {
         paint.withCustomColor {
             canvas.drawLine(
-                    quoteWidth/2f,
+                    quoteWidth / 2f,
                     lineTop.toFloat(),
-                    quoteWidth/2f,
+                    quoteWidth / 2f,
                     lineBottom.toFloat(),
                     paint
             )

@@ -19,7 +19,6 @@ object ArticleRepository {
             else MarkdownParser.parse(it)
         }
     }
-
     fun getArticle(articleId: String): LiveData<ArticleData?> {
         return local.findArticle(articleId) //2s delay from db
     }

@@ -14,6 +14,7 @@ import androidx.annotation.IntRange
 import androidx.annotation.Px
 import androidx.annotation.VisibleForTesting
 
+
 class HeaderSpan constructor(
         @IntRange(from = 1, to = 6)
         private val level: Int,
@@ -25,12 +26,12 @@ class HeaderSpan constructor(
         private val marginTop: Float,
         @Px
         private val marginBottom: Float
-) : MetricAffectingSpan(), LineHeightSpan, LeadingMarginSpan {
+) :
+        MetricAffectingSpan(), LineHeightSpan, LeadingMarginSpan {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val linePadding = 0.4f
     private var originAscent = 0
-
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val sizes = mapOf(
             1 to 2f,
@@ -152,5 +153,8 @@ class HeaderSpan constructor(
         drawLine(0f, top + 0f, width + 0f, top + 0f, Paint().apply { color = Color.BLUE })
         drawLine(0f, bottom + 0f, width + 0f, bottom + 0f, Paint().apply { color = Color.GREEN })
         drawLine(0f, lineBaseline + 0f, width + 0f, lineBaseline + 0f, Paint().apply { color = Color.RED })
+//        drawLine(0f,paint.ascent() + lineBaseline,width + 0f,paint.ascent() + lineBaseline,Paint().apply { color = Color.BLACK })
+//        drawLine(0f,paint.descent() + lineBaseline,width + 0f,paint.descent() + lineBaseline,Paint().apply { color = Color.MAGENTA })
     }
+
 }

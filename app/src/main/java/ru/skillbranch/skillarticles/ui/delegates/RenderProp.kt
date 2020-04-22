@@ -17,23 +17,23 @@ class RenderProp<T : Any>(
 
     operator fun provideDelegate(
             thisRef: Binding,
-            property: KProperty<*>
+            prop: KProperty<*>
     ): ReadWriteProperty<Binding, T> {
-        val delegate = RenderProp(value, true, onChange)
-        registerDelegate(thisRef, property.name, delegate)
+        val delegate = RenderProp(value, needInit, onChange)
+        registerDelegate(thisRef, prop.name, delegate)
         return delegate
     }
 
     override fun getValue(thisRef: Binding, property: KProperty<*>): T = value
 
     override fun setValue(thisRef: Binding, property: KProperty<*>, value: T) {
-        if (this.value == value) return
+        if (value == this.value) return
         this.value = value
         onChange?.invoke(this.value)
-
         if (listeners.isNotEmpty()) listeners.forEach { it.invoke() }
     }
 
+    //register additional listener
     fun addListener(listener: () -> Unit) {
         listeners.add(listener)
     }

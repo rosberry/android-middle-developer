@@ -8,6 +8,7 @@ import androidx.core.view.marginRight
 import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
 
+
 class SubmenuBehavior() : CoordinatorLayout.Behavior<ArticleSubmenu>() {
     constructor(context: Context, attrs: AttributeSet) : this()
 
@@ -24,6 +25,7 @@ class SubmenuBehavior() : CoordinatorLayout.Behavior<ArticleSubmenu>() {
             child: ArticleSubmenu,
             dependency: View
     ): Boolean {
+
         return if (child.isOpen && dependency.translationY >= 0f) {
             animate(child, dependency)
             true

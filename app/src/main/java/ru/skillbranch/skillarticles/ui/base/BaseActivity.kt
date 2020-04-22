@@ -34,15 +34,15 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
     val toolbarBuilder = ToolbarBuilder()
     val bottombarBuilder = BottombarBuilder()
 
-    // set listeners, configure views
+    //set listeners, tuning views
     abstract fun subscribeOnState(state: IViewModelState)
+
     abstract fun renderNotification(notify: Notify)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout)
         setSupportActionBar(toolbar)
-
         viewModel.observeState(this) { subscribeOnState(it) }
         viewModel.observeNotifications(this) { renderNotification(it) }
         viewModel.observeNavigation(this) { subscribeOnNavigation(it) }
@@ -67,12 +67,19 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
     private fun subscribeOnNavigation(command: NavigationCommand) {
         when (command) {
             is NavigationCommand.To -> {
-                navController.navigate(command.destination, command.args, command.options, command.extras)
+                navController.navigate(
+                        command.destination,
+                        command.args,
+                        command.options,
+                        command.extras
+                )
             }
+
             is NavigationCommand.FinishLogin -> {
                 navController.navigate(R.id.finish_login)
                 if (command.privateDestination != null) navController.navigate(command.privateDestination)
             }
+
             is NavigationCommand.StartLogin -> {
                 navController.navigate(
                         R.id.start_login,
@@ -130,6 +137,7 @@ class ToolbarBuilder {
     }
 
     fun build(context: FragmentActivity) {
+
         //show appbar if hidden due to scroll behavior
         context.appbar.setExpanded(true, true)
 
@@ -208,7 +216,9 @@ class BottombarBuilder {
                 val view = context.container.findViewById<View>(it)
                 context.container.removeView(view)
             }
+
             tempViews.clear()
+//            context.clearFindViewByIdCache()
         }
 
         //add new bottom bar views
@@ -223,11 +233,11 @@ class BottombarBuilder {
 
         with(context.nav_view) {
             isVisible = visible
-
             //show bottombar if hidden due to scroll behavior
             ((layoutParams as CoordinatorLayout.LayoutParams).behavior as HideBottomViewOnScrollBehavior)
                 .slideUp(this)
         }
+
     }
 
 }

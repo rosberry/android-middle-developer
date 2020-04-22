@@ -16,13 +16,12 @@ import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 
 class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
-
     override val viewModel: ArticlesViewModel by viewModels()
-    override val layout = R.layout.fragment_articles
+    override val layout: Int = R.layout.fragment_articles
     override val binding: ArticlesBinding by lazy { ArticlesBinding() }
 
     private val articlesAdapter = ArticlesAdapter { item ->
-        Log.i("ArticlesFragment", "click on article: ${item.id}")
+        Log.e("ArticlesFragment", "click on article: ${item.id} ")
         val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
                 item.id,
                 item.author,
@@ -39,6 +38,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
 
     override fun setupViews() {
         with(rv_articles) {
+            layoutManager = LinearLayoutManager(context)
             adapter = articlesAdapter
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
@@ -53,5 +53,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             data as ArticlesState
             articles = data.articles
         }
+
     }
+
 }

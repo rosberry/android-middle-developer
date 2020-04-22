@@ -8,7 +8,6 @@ import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 
 class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle, AuthState()), IAuthViewModel {
     private val repository = RootRepository
-
     init {
         subscribeOnDataSource(repository.isAuth()) { isAuth, state ->
             state.copy(isAuth = isAuth)
