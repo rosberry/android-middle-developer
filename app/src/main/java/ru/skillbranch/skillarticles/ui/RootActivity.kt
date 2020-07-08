@@ -1,7 +1,6 @@
 package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -36,7 +35,6 @@ class RootActivity : BaseActivity<RootViewModel>() {
         )
 
         setupActionBarWithNavController(navController, appbarConfiguration)
-//        nav_view.setupWithNavController(navController)
         nav_view.setOnNavigationItemSelectedListener {
             //if click on bottom navigation item - > navigate to destination by item id
             viewModel.navigate(NavigationCommand.To(it.itemId))
@@ -59,7 +57,6 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
     override fun renderNotification(notify: Notify) {
         val snackbar = Snackbar.make(container, notify.message, Snackbar.LENGTH_LONG)
-        Log.e("RootActivity", "notify: $notify")
         snackbar.anchorView = findViewById<Bottombar>(R.id.bottombar) ?: nav_view
 
         when (notify) {

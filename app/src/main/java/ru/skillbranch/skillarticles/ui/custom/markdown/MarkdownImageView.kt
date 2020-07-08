@@ -11,7 +11,6 @@ import android.graphics.Typeface
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.Spannable
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewAnimationUtils
@@ -238,7 +237,6 @@ class MarkdownImageView private constructor(
                 linePositionY,
                 linePaint
         )
-        Log.e("MarkdownImageView", "dr: ")
     }
 
     private fun animateShowAlt() {
