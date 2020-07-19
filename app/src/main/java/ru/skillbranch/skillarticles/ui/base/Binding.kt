@@ -22,7 +22,6 @@ abstract class Binding {
     }
 
     abstract fun bind(data: IViewModelState)
-
     /**
      * override this if need save binding in bundle
      */
@@ -52,6 +51,24 @@ abstract class Binding {
                         delegates[names[1]]?.value as B,
                         delegates[names[2]]?.value as C,
                         delegates[names[3]]?.value as D
+                )
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <A, B> dependsOn(
+            vararg fields: KProperty<*>,
+            onChange: (A, B) -> Unit
+    ) {
+        check(fields.size == 2) { "Names size must be 2, current ${fields.size}" }
+        val names = fields.map { it.name }
+
+        names.forEach {
+            delegates[it]?.addListener {
+                onChange(
+                        delegates[names[0]]?.value as A,
+                        delegates[names[1]]?.value as B
                 )
             }
         }

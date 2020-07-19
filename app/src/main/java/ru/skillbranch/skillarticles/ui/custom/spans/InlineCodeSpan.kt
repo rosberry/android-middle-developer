@@ -36,6 +36,7 @@ class InlineCodeSpan(
         paint.forText {
             val measureText = paint.measureText(text.toString(), start, end)
             measureWidth = (measureText + 2 * padding).toInt()
+            fm?.top = paint.fontMetrics.top.toInt()
         }
         return measureWidth
     }

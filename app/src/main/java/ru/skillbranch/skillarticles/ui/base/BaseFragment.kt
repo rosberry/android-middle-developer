@@ -69,11 +69,6 @@ abstract class BaseFragment<T : BaseViewModel<out IViewModelState>> : Fragment()
         binding?.rebind()
     }
 
-    override fun onDestroyView() {
-        viewModel.saveState()
-        super.onDestroyView()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         viewModel.saveState()
         binding?.saveUi(outState)

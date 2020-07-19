@@ -147,12 +147,8 @@ class SearchBgHelper constructor(
 
             startOffset = layout.getPrimaryHorizontal(spanStart).toInt()
             endOffset = layout.getPrimaryHorizontal(spanEnd).toInt()
-            println(singleLineRender)
-            println(multiLineRender)
             render = if (startLine == endLine) singleLineRender else multiLineRender
-            println(render)
 
-//            println("draw $drawable")
             render.draw(
                 canvas,
                 layout,
@@ -195,9 +191,6 @@ class SingleLineRender(
     padding: Int,
     val drawable: Drawable
 ) : SearchBgRender(padding) {
-    init {
-//        println("single line init $drawable")
-    }
 
     private var lineTop: Int = 0
     private var lineBottom: Int = 0
@@ -214,10 +207,6 @@ class SingleLineRender(
     ) {
         lineTop = getLineTop(layout, startLine) + topExtraPadding
         lineBottom = getLineBottom(layout, startLine) - bottomExtraPadding
-//        println("SingleLineRender $drawable")
-        val l = startOffset - padding
-        val r = endOffset + padding
-        println("left: $l, top: $lineTop, right: $r, bottom : $lineBottom")
         drawable.setBounds(startOffset - padding, lineTop, endOffset + padding, lineBottom)
         drawable.draw(canvas)
     }

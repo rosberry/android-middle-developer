@@ -39,17 +39,17 @@ fun Layout.getLineBottomWithoutPadding(line: Int): Int {
 fun Layout.getLineBottomWithoutSpacing(line: Int): Int {
     val lineBottom = getLineBottom(line)
     val isLastLine = line == lineCount.dec()
-    val isEmptyLine = getLineVisibleEnd(line)
-    val lc = lineCount
-    var preLastIsEmpty = false
-    if (line == lineCount.minus(2)) {
-        val lineVisibleEnd = getLineVisibleEnd(line.inc())
-        val lineStart = getLineStart(line.inc())
-        preLastIsEmpty = lineVisibleEnd == lineStart
-    }
-
     val hasLineSpacing = spacingAdd != 0f
-    return if (!hasLineSpacing || isLastLine || preLastIsEmpty) {
+
+    val nextLineIsLast = line == lineCount - 2
+
+    val onlyWhitespaceIsAfter = if (nextLineIsLast) {
+        val start = getLineStart(line + 1)
+        val lastVisible = getLineVisibleEnd(line + 1)
+        start == lastVisible
+    } else false
+
+    return if (!hasLineSpacing || isLastLine || onlyWhitespaceIsAfter) {
         lineBottom
     } else {
         lineBottom - spacingAdd.toInt()

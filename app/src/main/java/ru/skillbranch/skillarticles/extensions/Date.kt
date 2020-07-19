@@ -15,9 +15,7 @@ fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
 }
 
 fun Date.add(value: Int, units: TimeUnits = TimeUnits.SECOND): Date {
-    println("$this, $value, $units")
     var time = this.time;
-
 
     time += when (units) {
         TimeUnits.SECOND -> value * SECOND
@@ -36,7 +34,6 @@ fun Date.humanizeDiff(date: Date = Date()): String {
     val hours = (minutes / 60)
     val days = (hours / 24)
 
-    println("diff: $diff, seconds: $seconds, minutes: $minutes, hours: $hours, day: $days")
     return when (diff) {
         in 0L..1 * SECOND -> "just now"
         in 1 * SECOND..45 * SECOND -> "a few seconds ago"
