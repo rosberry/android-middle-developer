@@ -32,6 +32,7 @@ class HeaderSpan constructor(
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val linePadding = 0.4f
     private var originAscent = 0
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val sizes = mapOf(
             1 to 2f,

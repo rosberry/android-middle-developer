@@ -44,8 +44,8 @@ class ArticleViewModel(
 
     init {
         //subscribe on mutable data
+        fetchContent()
         subscribeOnDataSource(repository.findArticle(articleId)) { article, state ->
-            if (article.content == null) fetchContent()
             state.copy(
                     shareLink = article.shareLink,
                     title = article.title,
@@ -109,31 +109,34 @@ class ArticleViewModel(
 
     //personal article info
     override fun handleBookmark() {
-        val msg = if (!currentState.isBookmark) "Add to bookmarks" else "Remove from bookmarks"
-        launchSafety(
-                completeHandler = { notify(Notify.TextMessage(msg)) }
-        ) {
-            repository.toggleBookmark(articleId)
-        }
+        launchSafety {
+            val isBookmarked = repository.toggleBookmark(articleId)
 
+            if (isBookmarked) repository.addBookmark(articleId)
+            else repository.removeBookmark(articleId)
+
+            val msg = if (isBookmarked) "Add to bookmarks" else "Remove from bookmarks"
+            notify(Notify.TextMessage(msg))
+        }
     }
 
     override fun handleLike() {
-        val isLiked = currentState.isLike
-        val msg = if (!isLiked) Notify.TextMessage("Mark is liked")
-        else {
-            Notify.ActionMessage(
-                    "Don`t like it anymore", //message
-                    "No, still like it" //action label on snackbar
-                    // handler function , if press "No, still like it" on snackbar, then toggle again
-            ) { handleLike() }
-        }
-        launchSafety(
-                completeHandler = { notify(msg) }
-        ) {
-            repository.toggleLike(articleId)
-            if (isLiked) repository.decrementLike(articleId)
-            else repository.incrementLike(articleId)
+        launchSafety {
+            val isLiked = repository.toggleLike(articleId)
+
+            if (isLiked) repository.incrementLike(articleId)
+            else repository.decrementLike(articleId)
+
+            val msg = if (isLiked) Notify.TextMessage("Articles marked as liked")
+            else {
+                Notify.ActionMessage(
+                        "Don`t like it anymore", //message
+                        "No, still like it" //action label on snackbar
+                        // handler function , if press "No, still like it" on snackbar, then toggle again
+                ) { handleLike() }
+            }
+
+            notify(msg)
         }
     }
 
@@ -186,23 +189,22 @@ class ArticleViewModel(
         if (!currentState.isAuth) {
             navigate(NavigationCommand.StartLogin())
         } else {
-            launchSafety(
-                    completeHandler = {
-                        updateState {
-                            it.copy(
-                                    answerTo = null,
-                                    answerToMessageId = null,
-                                    commentText = null
-                            )
-                        }
-                    }
-            ) {
+            launchSafety(null, {
+                updateState {
+                    it.copy(
+                            answerTo = null,
+                            answerToMessageId = null,
+                            commentText = null
+                    )
+                }
+            }) {
                 repository.sendMessage(
                         articleId,
                         currentState.commentText!!,
                         currentState.answerToMessageId
                 )
             }
+
         }
     }
 
@@ -235,7 +237,6 @@ class ArticleViewModel(
     fun handleReplyTo(messageId: String, name: String) {
         updateState { it.copy(answerToMessageId = messageId, answerTo = "Reply to $name") }
     }
-
 }
 
 data class ArticleState(

@@ -5,7 +5,8 @@ import ru.skillbranch.skillarticles.data.repositories.ProfileRepository
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 
-class ProfileViewModel(handle: SavedStateHandle) : BaseViewModel<ProfileState>(handle, ProfileState()) {
+class ProfileViewModel(handle: SavedStateHandle) :
+        BaseViewModel<ProfileState>(handle, ProfileState()) {
 
     private val repository = ProfileRepository
 
@@ -24,9 +25,9 @@ class ProfileViewModel(handle: SavedStateHandle) : BaseViewModel<ProfileState>(h
 }
 
 data class ProfileState(
-        val avatar: String? =null,
+        val avatar: String? = null,
         val name: String? = null,
         val about: String? = null,
         val rating: Int = 0,
         val respect: Int = 0
-): IViewModelState
+) : IViewModelState

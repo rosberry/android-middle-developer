@@ -10,10 +10,10 @@ import java.util.Date
  * @author mmikhailov on 23.08.2020.
  */
 object JsonConverter {
-
+    // json converter
     val moshi = Moshi.Builder()
-        .add(DateAdapter())
-        .add(KotlinJsonAdapterFactory())
+        .add(DateAdapter()) //convert long timestamp to Date
+        .add(KotlinJsonAdapterFactory()) //convert json to class by reflection
         .build()
 
     class DateAdapter {

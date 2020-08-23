@@ -6,12 +6,12 @@ import java.io.IOException
  * @author mmikhailov on 23.08.2020.
  */
 sealed class ApiError(override val message: String) : IOException(message) {
-    class BadRequest(message: String?) : ApiError(message ?: "Bad request")
-    class Unauthorized(message: String?) : ApiError(message ?: "Unauthorized")
-    class Forbidden(message: String?) : ApiError(message ?: "Forbidden")
-    class NotFound(message: String?) : ApiError(message ?: "NotFound")
-    class InternalServerError(message: String?) : ApiError(message ?: "InternalServerError")
-    class UnknownError(message: String?) : ApiError(message ?: "UnknownError")
+    class BadRequest(message: String?) : ApiError(message ?: "Bad Request")
+    class Unauthorized(message: String?) : ApiError(message ?: "Authorization token required")
+    class Forbidden(message: String?) : ApiError(message ?: "Access denied")
+    class NotFound(message: String?) : ApiError(message ?: "Requested page not found")
+    class InternalServerError(message: String?) : ApiError(message ?: "Internal server error")
+    class UnknownError(message: String?) : ApiError(message ?: "Unknown error")
 }
 
 class ErrorBody(val message: String)

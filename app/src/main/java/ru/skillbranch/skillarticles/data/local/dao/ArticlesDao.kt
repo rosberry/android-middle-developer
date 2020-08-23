@@ -29,6 +29,11 @@ interface ArticlesDao : BaseDao<Article> {
 
     @Query("""
         SELECT * FROM articles
+    """)
+    suspend fun findArticlesTest(): List<Article>
+
+    @Query("""
+        SELECT * FROM articles
         WHERE id = :id
     """)
     fun findArticleById(id: String): LiveData<Article>
@@ -51,6 +56,7 @@ interface ArticlesDao : BaseDao<Article> {
     """)
     fun findArticlesByTagId(tag: String): LiveData<List<ArticleItem>>
 
+
     @RawQuery(observedEntities = [ArticleItem::class])
     fun findArticlesByRaw(simpleSQLiteQuery: SupportSQLiteQuery): DataSource.Factory<Int, ArticleItem>
 
@@ -64,7 +70,4 @@ interface ArticlesDao : BaseDao<Article> {
         SELECT id FROM articles ORDER BY date DESC LIMIT 1
     """)
     suspend fun findLastArticleId(): String?
-
-    @Query("SELECT * FROM articles")
-    suspend fun findArticlesTest(): List<Article>
 }

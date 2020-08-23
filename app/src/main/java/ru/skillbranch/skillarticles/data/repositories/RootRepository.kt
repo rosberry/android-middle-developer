@@ -12,8 +12,8 @@ object RootRepository {
 
     fun isAuth(): LiveData<Boolean> = preferences.isAuthLive
 
-    suspend fun login(login: String, pass: String) {
-        val auth = network.login(LoginReq(login, pass))
+    suspend fun login(login: String, password: String) {
+        val auth = network.login(LoginReq(login, password))
         preferences.profile = auth.user
         preferences.accessToken = "Bearer ${auth.accessToken}"
         preferences.refreshToken = auth.refreshToken

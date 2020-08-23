@@ -70,10 +70,16 @@ abstract class BaseViewModel<T : IViewModelState>(
         notifications.value = Event(content)
     }
 
+    /***
+     * отображение индикатора загрузки (по умолчанию не блокирующий loading)
+     */
     protected fun showLoading(loadingType: Loading = Loading.SHOW_LOADING) {
         loading.value = loadingType
     }
 
+    /***
+     * скрытие индикатора загрузки
+     */
     protected fun hideLoading() {
         loading.value = Loading.HIDE_LOADING
     }
@@ -90,6 +96,10 @@ abstract class BaseViewModel<T : IViewModelState>(
         state.observe(owner, Observer { onChanged(it!!) })
     }
 
+    /***
+     * более компактная форма записи observe() метода LiveData принимает последним аргумент лямбда
+     * выражение обрабатывающее изменение текущего индикатора загрузки
+     */
     fun observeLoading(owner: LifecycleOwner, onChanged: (newState: Loading) -> Unit) {
         loading.observe(owner, Observer { onChanged(it!!) })
     }
@@ -135,34 +145,42 @@ abstract class BaseViewModel<T : IViewModelState>(
     }
 
     protected fun launchSafety(
-            errorHandler: ((Throwable) -> Unit)? = null,
-            completeHandler: ((Throwable?) -> Unit)? = null,
+            errHandler: ((Throwable) -> Unit)? = null,
+            compHandler: ((Throwable?) -> Unit)? = null,
             block: suspend CoroutineScope.() -> Unit
     ) {
-        // используется обработчик ошибок переданный в качестве аргумента или обработчик ошибок по умолчанию
-        val coroutineExHandler = CoroutineExceptionHandler { _, t ->
-            errorHandler?.invoke(t) ?: when (t) {
-                is NoNetworkError -> notify(Notify.TextMessage("No network available, check internet connection"))
+        // используется обработчик ошибок переданный в качестве аргумента или обработчик ошибок пол умолчанию
+        val errHand = CoroutineExceptionHandler { _, err ->
+            errHandler?.invoke(err) ?: when (err) {
+                is NoNetworkError -> notify(Notify.TextMessage("Network not available, check internet connection"))
+
                 is SocketTimeoutException -> notify(
-                        Notify.ActionMessage("Network timeout exception - please try again", "Retry") {
-                            launchSafety(errorHandler, completeHandler, block)
-                        })
+                        Notify.ActionMessage(
+                                "Network timeout exception - please try again",
+                                "Retry"
+                        ) { launchSafety(errHandler, compHandler, block) })
+
                 is ApiError.InternalServerError -> notify(
-                        Notify.ErrorMessage(t.message, "Retry") {
-                            launchSafety(errorHandler, completeHandler, block)
-                        })
-                is ApiError -> notify(Notify.ErrorMessage(t.message))
-                else -> notify(Notify.ErrorMessage(t.message ?: "Something wrong"))
+                        Notify.ErrorMessage(
+                                err.message,
+                                "Retry"
+                        ) { launchSafety(errHandler, compHandler, block) })
+
+                is ApiError -> notify(Notify.ErrorMessage(err.message))
+                else -> notify(Notify.ErrorMessage(err.message ?: "Something wrong"))
             }
         }
 
-        (viewModelScope + coroutineExHandler).launch {
+        (viewModelScope + errHand).launch {
+            // отобразить индикатор загрузки
             showLoading()
             block()
         }
             .invokeOnCompletion {
+                // скрыть индикатор загрузки по окончанию выполнения suspend функции
                 hideLoading()
-                completeHandler?.invoke(it)
+                // вызвать обработчик окончания выполнения suspend функции если имеется
+                compHandler?.invoke(it)
             }
     }
 }

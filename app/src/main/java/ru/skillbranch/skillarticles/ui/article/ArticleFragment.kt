@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -106,7 +105,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
     override fun renderLoading(loadingState: Loading) {
         when (loadingState) {
-            Loading.SHOW_LOADING -> if(!refresh.isRefreshing) root.progress.isVisible = true
+            Loading.SHOW_LOADING -> if (!refresh.isRefreshing) root.progress.isVisible = true
             Loading.SHOW_BLOCKING_LOADING -> root.progress.isVisible = false
             Loading.HIDE_LOADING -> {
                 root.progress.isVisible = false
@@ -220,8 +219,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         wrap_comments.setEndIconOnClickListener { view ->
             view.context.hideKeyboard(view)
             viewModel.handleClearComment()
-//            et_comment.text = null
-//            et_comment.clearFocus()
         }
 
         refresh.setOnRefreshListener {
@@ -234,7 +231,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         }
 
         viewModel.observeList(viewLifecycleOwner) { commentsAdapter.submitList(it) }
-
     }
 
     override fun onDestroyView() {
@@ -340,9 +336,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         var searchQuery: String? = null
 
         private var isLoadingContent by RenderProp(false) {
-            Log.e("ArticleFragment", "content is loading: $it")
             tv_text_content.isLoading = it
-            if (it) setupCopyListener()
+            if (!it) setupCopyListener()
         }
         private var isLike: Boolean by RenderProp(false) { bottombar.btn_like.isChecked = it }
         private var isBookmark: Boolean by RenderProp(false) {

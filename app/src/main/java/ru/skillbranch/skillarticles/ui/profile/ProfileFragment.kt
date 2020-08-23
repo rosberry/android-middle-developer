@@ -17,10 +17,11 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
     override val binding: ProfileBinding by lazy { ProfileBinding() }
 
     override fun setupViews() {
+
     }
 
     private fun updateAvatar(avatarUrl: String) {
-
+        //TODO update avatar with Glide this
     }
 
     inner class ProfileBinding : Binding() {

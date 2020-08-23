@@ -5,9 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import kotlinx.coroutines.launch
 import ru.skillbranch.skillarticles.data.local.entities.ArticleItem
 import ru.skillbranch.skillarticles.data.local.entities.CategoryData
 import ru.skillbranch.skillarticles.data.remote.err.NoNetworkError
@@ -23,7 +25,6 @@ class ArticlesViewModel(handle: SavedStateHandle) :
     private val repository = ArticlesRepository
     private var isLoadingInitial = false
     private var isLoadingAfter = false
-
     private val listConfig by lazy {
         PagedList.Config.Builder()
             .setEnablePlaceholders(false)
@@ -88,7 +89,7 @@ class ArticlesViewModel(handle: SavedStateHandle) :
         if (isLoadingAfter) return
         else isLoadingAfter = true
 
-        launchSafety(completeHandler = { isLoadingAfter = false }) {
+        launchSafety(null, { isLoadingAfter = false }) {
             repository.loadArticlesFromNetwork(
                     start = lastLoadArticle.id,
                     size = listConfig.pageSize
@@ -100,7 +101,7 @@ class ArticlesViewModel(handle: SavedStateHandle) :
         if (isLoadingInitial) return
         else isLoadingInitial = true
 
-        launchSafety(completeHandler = { isLoadingInitial = false }) {
+        launchSafety(null, { isLoadingInitial = false }) {
             repository.loadArticlesFromNetwork(
                     start = null,
                     size = listConfig.initialLoadSizeHint
@@ -119,9 +120,10 @@ class ArticlesViewModel(handle: SavedStateHandle) :
 
     fun handleToggleBookmark(articleId: String) {
         launchSafety(
-                errorHandler = {
+                {
                     when (it) {
-                        is NoNetworkError -> notify(Notify.TextMessage("No network available, failed to fetch article"))
+                        is NoNetworkError -> notify(
+                                Notify.TextMessage("Network Not Available, failed to fetch article"))
                         else -> notify(Notify.ErrorMessage(it.message ?: "Something wrong"))
                     }
                 }
@@ -129,15 +131,17 @@ class ArticlesViewModel(handle: SavedStateHandle) :
             val isBookmarked = repository.toggleBookmark(articleId)
             // if bookmarked need fetch content and handle network error
             if (isBookmarked) {
-                repository.fetchArticleContent(articleId)
+                launch { repository.fetchArticleContent(articleId) }
+                launch { repository.addBookmark(articleId) }
             } else {
-                // todo remove article content from db
+                launch { repository.removeArticleContent(articleId) }
+                launch { repository.removeBookmark(articleId) }
             }
         }
     }
 
     fun handleSuggestion(tag: String) {
-        launchSafety { repository.incrementTagUseCount(tag) }
+        viewModelScope.launch { repository.incrementTagUseCount(tag) }
     }
 
     fun applyCategories(selectedCategories: List<String>) {
@@ -154,8 +158,6 @@ class ArticlesViewModel(handle: SavedStateHandle) :
             notify(Notify.TextMessage("Load $count new articles"))
         }
     }
-
-
 }
 
 private fun ArticlesState.toArticleFilter(): ArticleFilter = ArticleFilter(

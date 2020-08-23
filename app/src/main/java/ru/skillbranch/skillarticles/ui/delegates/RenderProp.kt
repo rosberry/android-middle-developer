@@ -12,13 +12,14 @@ class RenderProp<T : Any>(
     private val listeners: MutableList<() -> Unit> = mutableListOf()
 
     fun bind() {
-        if (needInit) onChange?.invoke(value)
+        if (needInit) onChange?.invoke(this.value)
     }
 
     operator fun provideDelegate(
             thisRef: Binding,
             prop: KProperty<*>
     ): ReadWriteProperty<Binding, T> {
+
         val delegate = RenderProp(value, needInit, onChange)
         registerDelegate(thisRef, prop.name, delegate)
         return delegate

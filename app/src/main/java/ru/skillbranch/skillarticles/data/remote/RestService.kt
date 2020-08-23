@@ -9,13 +9,16 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.skillbranch.skillarticles.data.remote.req.LoginReq
 import ru.skillbranch.skillarticles.data.remote.req.MessageReq
+import ru.skillbranch.skillarticles.data.remote.req.RefreshReq
 import ru.skillbranch.skillarticles.data.remote.res.ArticleContentRes
 import ru.skillbranch.skillarticles.data.remote.res.ArticleCountsRes
 import ru.skillbranch.skillarticles.data.remote.res.ArticleRes
 import ru.skillbranch.skillarticles.data.remote.res.AuthRes
+import ru.skillbranch.skillarticles.data.remote.res.BookmarkRes
 import ru.skillbranch.skillarticles.data.remote.res.CommentRes
 import ru.skillbranch.skillarticles.data.remote.res.LikeRes
 import ru.skillbranch.skillarticles.data.remote.res.MessageRes
+import ru.skillbranch.skillarticles.data.remote.res.RefreshRes
 
 /**
  * @author mmikhailov on 17.08.2020.
@@ -43,7 +46,7 @@ interface RestService {
 
     // https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/messages
     @POST("articles/{article}/messages")
-    fun sendMessage(
+    suspend fun sendMessage(
             @Path("article") articleId: String,
             @Body message: MessageReq,
             @Header("Authorization") token: String
@@ -51,11 +54,14 @@ interface RestService {
 
     // https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/counts
     @GET("articles/{article}/counts")
-    fun loadArticleCounts(@Path("article") articleId: String): ArticleCountsRes
+    suspend fun loadArticleCounts(@Path("article") articleId: String): ArticleCountsRes
 
     // https://skill-articles.skill-branch.ru/api/v1/auth/login
     @POST("auth/login")
     suspend fun login(@Body loginReq: LoginReq): AuthRes
+
+    @POST("auth/login")
+    fun loginCall(@Body loginReq: LoginReq): Call<AuthRes>
 
     // https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/decrementLikes
     @POST("articles/{article}/decrementLikes")
@@ -70,4 +76,23 @@ interface RestService {
             @Path("article") articleId: String,
             @Header("Authorization") token: String
     ): LikeRes
+
+    // https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/addBookmark
+    @POST("articles/{article}/addBookmark")
+    suspend fun addBookmark(
+            @Path("article") articleId: String,
+            @Header("Authorization") token: String
+    ): BookmarkRes
+
+    // https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/removeBookmark
+    @POST("articles/{article}/removeBookmark")
+    suspend fun removeBookmark(
+            @Path("article") articleId: String,
+            @Header("Authorization") token: String
+    ): BookmarkRes
+
+    @POST("auth/refresh")
+    fun refreshAccessToken(
+            @Body refresh: RefreshReq
+    ): Call<RefreshRes>
 }

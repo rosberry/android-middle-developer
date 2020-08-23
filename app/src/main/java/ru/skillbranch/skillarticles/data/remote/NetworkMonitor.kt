@@ -13,24 +13,25 @@ import androidx.lifecycle.MutableLiveData
  */
 object NetworkMonitor {
     var isConnected: Boolean = false
-    var isConnectedLive = MutableLiveData(false)
-    var networkTypeLive = MutableLiveData(NetworkType.NONE)
+    val isConnectedLive = MutableLiveData(false)
+    val networkTypeLive = MutableLiveData(NetworkType.NONE)
 
     private lateinit var cm: ConnectivityManager
-
-    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    fun setNetworkIsConnected(isConnected:Boolean = true) { this.isConnected = isConnected }
 
     fun registerNetworkMonitor(ctx: Context) {
         cm = ctx.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         obtainNetworkType(cm.activeNetwork?.let { cm.getNetworkCapabilities(it) })
-            .also { networkTypeLive.postValue(it)}
+            .also { networkTypeLive.postValue(it) }
 
         cm.registerNetworkCallback(
-                NetworkRequest.Builder().build(),
+                NetworkRequest.Builder()
+                    .build(),
                 object : ConnectivityManager.NetworkCallback() {
-                    override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                    override fun onCapabilitiesChanged(
+                            network: Network,
+                            networkCapabilities: NetworkCapabilities
+                    ) {
                         networkTypeLive.postValue(obtainNetworkType(networkCapabilities))
                     }
 
@@ -48,11 +49,16 @@ object NetworkMonitor {
         )
     }
 
-    private fun obtainNetworkType(networkCapabilities: NetworkCapabilities?) : NetworkType = when {
+    private fun obtainNetworkType(networkCapabilities: NetworkCapabilities?): NetworkType = when {
         networkCapabilities == null -> NetworkType.NONE
         networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> NetworkType.WIFI
         networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> NetworkType.CELLULAR
         else -> NetworkType.UNKNOWN
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    fun setNetworkIsConnected(isConnected: Boolean = true) {
+        this.isConnected = isConnected
     }
 }
 

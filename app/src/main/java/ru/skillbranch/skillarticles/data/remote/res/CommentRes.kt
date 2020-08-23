@@ -6,7 +6,6 @@ import java.util.Date
 
 data class CommentRes(
         val id: String,
-        val articleId: String,
         @Json(name = "author")
         val user: User,
         @Json(name = "message")
