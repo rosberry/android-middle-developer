@@ -10,8 +10,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+import ru.skillbranch.skillarticles.data.remote.err.ApiError
+import ru.skillbranch.skillarticles.data.remote.err.NoNetworkError
+import java.net.SocketTimeoutException
 
 abstract class BaseViewModel<T : IViewModelState>(
         private val handleState: SavedStateHandle,
@@ -19,8 +27,10 @@ abstract class BaseViewModel<T : IViewModelState>(
 ) : ViewModel() {
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     val notifications = MutableLiveData<Event<Notify>>()
+
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     val navigation = MutableLiveData<Event<NavigationCommand>>()
+    private val loading = MutableLiveData<Loading>(Loading.HIDE_LOADING)
 
     /***
      * Инициализация начального состояния аргументом конструктоа, и объявления состояния как
@@ -60,6 +70,14 @@ abstract class BaseViewModel<T : IViewModelState>(
         notifications.value = Event(content)
     }
 
+    protected fun showLoading(loadingType: Loading = Loading.SHOW_LOADING) {
+        loading.value = loadingType
+    }
+
+    protected fun hideLoading() {
+        loading.value = Loading.HIDE_LOADING
+    }
+
     open fun navigate(command: NavigationCommand) {
         navigation.value = Event(command)
     }
@@ -70,7 +88,10 @@ abstract class BaseViewModel<T : IViewModelState>(
      */
     fun observeState(owner: LifecycleOwner, onChanged: (newState: T) -> Unit) {
         state.observe(owner, Observer { onChanged(it!!) })
+    }
 
+    fun observeLoading(owner: LifecycleOwner, onChanged: (newState: Loading) -> Unit) {
+        loading.observe(owner, Observer { onChanged(it!!) })
     }
 
     /***
@@ -113,6 +134,37 @@ abstract class BaseViewModel<T : IViewModelState>(
         state.value = currentState.restore(handleState) as T
     }
 
+    protected fun launchSafety(
+            errorHandler: ((Throwable) -> Unit)? = null,
+            completeHandler: ((Throwable?) -> Unit)? = null,
+            block: suspend CoroutineScope.() -> Unit
+    ) {
+        // используется обработчик ошибок переданный в качестве аргумента или обработчик ошибок по умолчанию
+        val coroutineExHandler = CoroutineExceptionHandler { _, t ->
+            errorHandler?.invoke(t) ?: when (t) {
+                is NoNetworkError -> notify(Notify.TextMessage("No network available, check internet connection"))
+                is SocketTimeoutException -> notify(
+                        Notify.ActionMessage("Network timeout exception - please try again", "Retry") {
+                            launchSafety(errorHandler, completeHandler, block)
+                        })
+                is ApiError.InternalServerError -> notify(
+                        Notify.ErrorMessage(t.message, "Retry") {
+                            launchSafety(errorHandler, completeHandler, block)
+                        })
+                is ApiError -> notify(Notify.ErrorMessage(t.message))
+                else -> notify(Notify.ErrorMessage(t.message ?: "Something wrong"))
+            }
+        }
+
+        (viewModelScope + coroutineExHandler).launch {
+            showLoading()
+            block()
+        }
+            .invokeOnCompletion {
+                hideLoading()
+                completeHandler?.invoke(it)
+            }
+    }
 }
 
 class Event<out E>(private val content: E) {
@@ -161,8 +213,8 @@ sealed class Notify() {
 
     data class ErrorMessage(
             override val message: String,
-            val errLabel: String?,
-            val errHandler: (() -> Unit)?
+            val errLabel: String? = null,
+            val errHandler: (() -> Unit)? = null
     ) : Notify()
 }
 
@@ -181,4 +233,8 @@ sealed class NavigationCommand() {
     data class FinishLogin(
             val privateDestination: Int? = null
     ) : NavigationCommand()
+}
+
+enum class Loading {
+    SHOW_LOADING, SHOW_BLOCKING_LOADING, HIDE_LOADING
 }

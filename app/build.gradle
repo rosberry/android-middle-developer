@@ -75,6 +75,14 @@ dependencies {
     //stetho for debug db
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
+    // network
+    implementation "com.squareup.retrofit2:retrofit:$retofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retofit_version"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2"
 

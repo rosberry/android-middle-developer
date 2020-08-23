@@ -19,6 +19,7 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_category_dialog.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.local.entities.CategoryData
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 
 class ChoseCategoryDialog : DialogFragment() {
@@ -88,6 +89,9 @@ class CategoryVH(override val containerView: View, val listener: (String, Boolea
         RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     fun bind(item: CategoryDataItem) {
+        // remove listener
+        ch_select.setOnCheckedChangeListener(null)
+        // bind data
         ch_select.isChecked = item.isChecked
         Glide.with(containerView.context)
             .load(item.icon)
@@ -96,6 +100,7 @@ class CategoryVH(override val containerView: View, val listener: (String, Boolea
             .into(iv_icon)
         tv_category.text = item.title
         tv_count.text = "${item.articlesCount}"
+        // set listeners
         ch_select.setOnCheckedChangeListener { _, checked -> listener(item.categoryId, checked) }
         itemView.setOnClickListener { ch_select.toggle() }
     }
@@ -116,3 +121,5 @@ data class CategoryDataItem(
         val articlesCount: Int = 0,
         val isChecked: Boolean = false
 )
+
+fun CategoryData.toItem(checked: Boolean = false) = CategoryDataItem(categoryId, icon, title, articlesCount, checked)
