@@ -5,26 +5,32 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import ru.skillbranch.skillarticles.data.local.PrefManager
-import ru.skillbranch.skillarticles.data.remote.NetworkManager.api
+import ru.skillbranch.skillarticles.data.remote.NetworkManager
 import ru.skillbranch.skillarticles.data.remote.req.RefreshReq
 
 class TokenAuthenticator : Authenticator {
 
     private val prefs = PrefManager
+    private val api by lazy { NetworkManager.api }
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        return if (response.code == 401) {
-            val req = RefreshReq(prefs.refreshToken)
-            val res = api.refreshAccessToken(req)
-                .execute()
+        return if (response.code != 401) null
+        else {
+            // request new access token by refresh token (sync)
+            val res = api.refreshAccessToken(RefreshReq(prefs.refreshToken)).execute()
 
-            return if (res.isSuccessful) {
-                prefs.accessToken = "Bearer ${res.body()!!.accessToken}"
+            return if (!res.isSuccessful) null
+            else {
+                //save new refresh / access token
+                val newAccessToken = res.body()!!.accessToken
+                prefs.accessToken = "Bearer $newAccessToken"
                 prefs.refreshToken = res.body()!!.refreshToken
+
+                //retry request with new access token
                 response.request.newBuilder()
-                    .header("Authorization", "Bearer ${res.body()!!.accessToken} ")
+                    .header("Authorization", "Bearer $newAccessToken ")
                     .build()
-            } else null
-        } else null
+            }
+        }
     }
 }

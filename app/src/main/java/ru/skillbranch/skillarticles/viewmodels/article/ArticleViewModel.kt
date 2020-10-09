@@ -42,6 +42,7 @@ class ArticleViewModel(
                 buildPagedList(repository.loadAllComments(articleId, it, ::commentLoadErrorHandler))
             }
 
+
     init {
         //subscribe on mutable data
         fetchContent()
@@ -82,7 +83,7 @@ class ArticleViewModel(
     }
 
     private fun commentLoadErrorHandler(throwable: Throwable) {
-        // todo handle network error this
+        //TODO handle network errors this
     }
 
     private fun fetchContent() {
@@ -98,8 +99,7 @@ class ArticleViewModel(
     }
 
     override fun handleUpText() {
-        repository.updateSettings(currentState.toAppSettings()
-            .copy(isBigText = true))
+        repository.updateSettings(currentState.toAppSettings().copy(isBigText = true))
     }
 
     override fun handleDownText() {
@@ -109,6 +109,7 @@ class ArticleViewModel(
 
     //personal article info
     override fun handleBookmark() {
+
         launchSafety {
             val isBookmarked = repository.toggleBookmark(articleId)
 
@@ -131,9 +132,9 @@ class ArticleViewModel(
             else {
                 Notify.ActionMessage(
                         "Don`t like it anymore", //message
-                        "No, still like it" //action label on snackbar
-                        // handler function , if press "No, still like it" on snackbar, then toggle again
-                ) { handleLike() }
+                        "No, still like it", //action label on snackbar
+                        { handleLike() }// handler function , if press "No, still like it" on snackbar, then toggle again
+                )
             }
 
             notify(msg)

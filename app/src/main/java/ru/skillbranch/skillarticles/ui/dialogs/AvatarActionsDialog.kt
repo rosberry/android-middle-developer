@@ -27,9 +27,13 @@ class AvatarActionsDialog : BottomSheetDialogFragment() {
         const val DELETE_KEY = "DELETE_KEY"
     }
 
-    private val args : AvatarActionsDialogArgs by navArgs()
+    private val args: AvatarActionsDialogArgs by navArgs()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.bottom_sheet, container, false)
     }
 
@@ -58,6 +62,5 @@ class AvatarActionsDialog : BottomSheetDialogFragment() {
             setFragmentResult(AVATAR_ACTIONS_KEY, bundleOf(SELECT_ACTION_KEY to DELETE_KEY))
             dismiss()
         }
-
     }
 }

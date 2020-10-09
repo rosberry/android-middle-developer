@@ -7,9 +7,12 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import ru.skillbranch.skillarticles.data.models.User
+import ru.skillbranch.skillarticles.data.remote.req.EditProfileReq
 import ru.skillbranch.skillarticles.data.remote.req.LoginReq
 import ru.skillbranch.skillarticles.data.remote.req.MessageReq
 import ru.skillbranch.skillarticles.data.remote.req.RefreshReq
@@ -106,4 +109,10 @@ interface RestService {
             @Part file: MultipartBody.Part?,
             @Header("Authorization") token: String
     ): UploadRes
+
+    @PUT("profile/avatar/remove")
+    suspend fun removeProfileAvatar(@Header("Authorization") auth: String): UploadRes
+
+    @PUT("profile")
+    suspend fun editProfile(@Body editProfileReq: EditProfileReq, @Header("Authorization") auth: String): User
 }

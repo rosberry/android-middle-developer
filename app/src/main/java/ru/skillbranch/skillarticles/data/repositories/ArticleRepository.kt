@@ -211,8 +211,7 @@ class CommentsDataSource(
                     articleId,
                     params.requestedInitialKey,
                     params.requestedLoadSize
-            )
-                .execute()
+            ).execute()
 
             callback.onResult(
                     if (totalCount > 0) result.body()!! else emptyList(),
@@ -233,8 +232,7 @@ class CommentsDataSource(
                     articleId,
                     params.key,
                     params.requestedLoadSize
-            )
-                .execute()
+            ).execute()
             callback.onResult(result.body()!!)
         } catch (e: Throwable) {
             //handle network errors in viewModel
@@ -249,8 +247,7 @@ class CommentsDataSource(
                     articleId,
                     params.key,
                     -params.requestedLoadSize
-            )
-                .execute()
+            ).execute()
             callback.onResult(result.body()!!)
         } catch (e: Throwable) {
             //handle network errors in viewModel

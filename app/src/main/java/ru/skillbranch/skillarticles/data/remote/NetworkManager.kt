@@ -24,15 +24,16 @@ object NetworkManager {
         val client = OkHttpClient().newBuilder()
             .readTimeout(2, TimeUnit.SECONDS) // socket timeout (GET)
             .writeTimeout(5, TimeUnit.SECONDS) // socket timeout (POST , PUT, etc)
-            .authenticator(TokenAuthenticator())
-            .addInterceptor(NetworkStatusInterceptor())
-            .addInterceptor(logging)
-            .addInterceptor(ErrorStatusInterceptor())
+            .authenticator(TokenAuthenticator()) // refresh token if response status code 401
+            .addInterceptor(NetworkStatusInterceptor()) // intercept network status
+            .addInterceptor(logging) // intercept req/res for logging
+            .addInterceptor(ErrorStatusInterceptor()) // intercept status errors
             .build()
 
+        // retrofit
         val retrofit = Retrofit.Builder()
-            .client(client)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(client) // set http client
+            .addConverterFactory(MoshiConverterFactory.create(moshi)) // set json converter/parser
             .baseUrl(AppConfig.BASE_URL)
             .build()
 

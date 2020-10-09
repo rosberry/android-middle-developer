@@ -15,18 +15,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.textfield.TextInputLayout android:id="@+id/wrap_name"
+        style="@style/Base.Widget.MaterialComponents.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginEnd="56dp"
+        android:hint="Name"
+        android:theme="@style/TextInputLayoutAppearance"
+        app:layout_constraintBottom_toTopOf="@id/wrap_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <EditText android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout android:id="@+id/wrap_login"
+        style="@style/Base.Widget.MaterialComponents.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
         android:layout_marginEnd="56dp"
         android:hint="Login"
-        style="@style/Base.Widget.MaterialComponents.TextInputLayout"
         android:theme="@style/TextInputLayoutAppearance"
         app:layout_constraintBottom_toTopOf="@id/wrap_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wrap_name"
         app:layout_constraintVertical_chainStyle="packed">
 
         <EditText android:id="@+id/et_login"
@@ -36,12 +56,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout android:id="@+id/wrap_password"
+        style="@style/Base.Widget.MaterialComponents.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
         android:layout_marginEnd="56dp"
         android:hint="Password"
-        style="@style/Base.Widget.MaterialComponents.TextInputLayout"
         android:theme="@style/TextInputLayoutAppearance"
         app:layout_constraintBottom_toTopOf="@id/btn_login"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,44 +80,20 @@
         android:layout_marginStart="56dp"
         android:layout_marginEnd="56dp"
         android:backgroundTint="@color/color_accent"
-        android:text="Login"
+        android:text="Register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/wrap_password" />
 
-    <TextView android:id="@+id/tv_register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Registration"
-        android:textColor="@color/color_gray"
-        android:bufferType="spannable"
-        app:layout_constraintBottom_toTopOf="@id/tv_privacy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_login"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
     <TextView android:id="@+id/tv_privacy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/color_gray"
+        android:bufferType="spannable"
         android:text="Privacy policy"
-        android:bufferType="spannable"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tv_access_code"
-        app:layout_constraintTop_toBottomOf="@id/tv_register" />
-
-    <TextView android:id="@+id/tv_access_code"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:bufferType="spannable"
-        android:text="How to get authorization code"
         android:textColor="@color/color_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_privacy" />
-
+        app:layout_constraintTop_toBottomOf="@id/btn_login" />
 </androidx.constraintlayout.widget.ConstraintLayout>

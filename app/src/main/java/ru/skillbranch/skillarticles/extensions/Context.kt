@@ -26,8 +26,7 @@ fun Context.dpToIntPx(dp: Int): Int {
             TypedValue.COMPLEX_UNIT_DIP,
             dp.toFloat(),
             this.resources.displayMetrics
-    )
-        .toInt()
+    ).toInt()
 }
 
 fun Context.hideKeyboard(view: View) {

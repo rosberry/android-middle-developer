@@ -70,7 +70,8 @@ abstract class BaseViewModel<T : IViewModelState>(
      * повторно
      */
     @UiThread
-    protected fun notify(content: Notify) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    fun notify(content: Notify) {
         notifications.value = Event(content)
     }
 
@@ -179,20 +180,19 @@ abstract class BaseViewModel<T : IViewModelState>(
             // отобразить индикатор загрузки
             showLoading()
             block()
+        }.invokeOnCompletion {
+            // скрыть индикатор загрузки по окончанию выполнения suspend функции
+            hideLoading()
+            // вызвать обработчик окончания выполнения suspend функции если имеется
+            compHandler?.invoke(it)
         }
-            .invokeOnCompletion {
-                // скрыть индикатор загрузки по окончанию выполнения suspend функции
-                hideLoading()
-                // вызвать обработчик окончания выполнения suspend функции если имеется
-                compHandler?.invoke(it)
-            }
     }
 
     fun requestPermissions(requestedPermissions: List<String>) {
         permissions.value = Event(requestedPermissions)
     }
 
-    fun observePermissions(owner: LifecycleOwner, handle: (permissions: List<String>) -> Unit) {
+    fun observerPermissions(owner: LifecycleOwner, handle: (permisions: List<String>) -> Unit) {
         permissions.observe(owner, EventObserver { handle(it) })
     }
 }

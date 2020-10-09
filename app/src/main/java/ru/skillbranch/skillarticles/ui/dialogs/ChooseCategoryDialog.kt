@@ -5,24 +5,21 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 
-class ChoseCategoryDialog : DialogFragment() {
+class ChooseCategoryDialog : DialogFragment() {
 
     companion object {
         const val CHOOSE_CATEGORY_KEY = "CHOOSE_CATEGORY_KEY"
         const val SELECTED_CATEGORIES = "SELECTED_CATEGORIES"
     }
 
-    private val viewModel: ArticlesViewModel by activityViewModels()
     private val selected = mutableSetOf<String>()
-    private val args: ChoseCategoryDialogArgs by navArgs()
+    private val args: ChooseCategoryDialogArgs by navArgs()
 
     private val categoryAdapter = CategoryAdapter { categoryId: String, isChecked: Boolean ->
         if (isChecked) selected.add(categoryId)

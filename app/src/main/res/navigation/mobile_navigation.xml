@@ -102,6 +102,12 @@
             android:label="@string/title_privacy_policy"
             tools:layout="@layout/fragment_privacy_policy" />
 
+        <fragment
+            android:id="@+id/page_registry"
+            android:name="ru.skillbranch.skillarticles.ui.auth.RegistrationFragment"
+            android:label="@string/title_registration"
+            tools:layout="@layout/fragment_registration" />
+
     </navigation>
 
     <!--global actions -->
@@ -114,7 +120,7 @@
         app:popUpToInclusive="true" />
     <dialog
         android:id="@+id/dialog_chose_category"
-        android:name="ru.skillbranch.skillarticles.ui.dialogs.ChoseCategoryDialog"
+        android:name="ru.skillbranch.skillarticles.ui.dialogs.ChooseCategoryDialog"
         android:label="ChoseCategoryDialog">
         <argument
             android:name="selected_categories"

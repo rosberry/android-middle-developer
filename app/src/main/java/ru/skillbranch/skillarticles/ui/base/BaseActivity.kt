@@ -94,7 +94,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
     }
 
     open fun renderLoading(loadingState: Loading) {
-        when(loadingState) {
+        when (loadingState) {
             Loading.SHOW_LOADING -> progress.isVisible = true
             Loading.SHOW_BLOCKING_LOADING -> {
                 progress.isVisible = true

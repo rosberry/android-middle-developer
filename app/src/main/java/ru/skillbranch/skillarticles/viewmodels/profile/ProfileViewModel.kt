@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import android.provider.Settings
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -26,10 +27,11 @@ import java.io.InputStream
 
 class ProfileViewModel(handle: SavedStateHandle) :
         BaseViewModel<ProfileState>(handle, ProfileState()) {
-
     private val repository = ProfileRepository
     private val activityResults = MutableLiveData<Event<PendingAction>>()
-    private val storagePermissions = listOf(
+
+
+    private val storagePermissions = listOf<String>(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
     )
@@ -47,76 +49,61 @@ class ProfileViewModel(handle: SavedStateHandle) :
         }
     }
 
-    fun handleTestAction(source: Uri, destination: Uri) {
-        val pendingAction = PendingAction.EditAction(source to destination)
-        updateState { it.copy(pendingAction = pendingAction) }
-        requestPermissions(storagePermissions)
-    }
-
-    fun handlePermission(result: Map<String, Pair<Boolean, Boolean>>) {
-        val isAllGranted =
-                result.values
-                    .map { it.first }
-                    .all { true }
-        val isAllMayBeShown =
-                result.values
-                    .map { it.second }
-                    .all { true }
-
-        when {
-            isAllGranted -> executePendingAction()
-            !isAllMayBeShown -> executeOpenSettings()
-            else -> {
-                val msgNeedStoragePermissions =
-                        Notify.ErrorMessage(
-                                "Need permissions for storage",
-                                "Retry"
-                        ) { requestPermissions(storagePermissions) }
-
-                notify(content = msgNeedStoragePermissions)
-            }
-        }
-    }
-
-    private fun startForResult(action: PendingAction) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun startForResult(action: PendingAction) {
         activityResults.value = Event(action)
     }
 
-    private fun executeOpenSettings() {
-        val errHandler = {
-            val intentAppSettings =
-                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.parse("package:ru.skillbranch.skillarticles")
-                    }
+    fun handlePermission(permissionsResult: Map<String, Pair<Boolean, Boolean>>) {
 
-            startForResult(PendingAction.SettingsAction(intentAppSettings))
-        }
+        val isAllGranted = !permissionsResult.values.map { it.first }.contains(false)
+        val isAllMayBeShown = !permissionsResult.values.map { it.second }.contains(false)
 
-        val msgNeedStoragePermissions =
-                Notify.ErrorMessage(
+        when {
+            //if all permissions granted execute action
+            isAllGranted -> executePendingAction()
+            //if request permission not may be shown (don`t ask again check) show app settings for manual permission
+            !isAllMayBeShown -> executeOpenSettings()
+            //else retry request permissions
+            else -> {
+                val msg = Notify.ErrorMessage(
                         "Need permissions for storage",
                         "Retry",
-                        errHandler
+                        { requestPermissions(storagePermissions) }
                 )
+                notify(msg)
+            }
 
-        notify(content = msgNeedStoragePermissions)
+        }
+
     }
 
-    private fun executePendingAction() {
+    fun executeOpenSettings() {
+        val errHandler = {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.parse("package:ru.skillbranch.skillarticles")
+            }
+            startForResult(PendingAction.SettingsAction(intent))
+        }
+        notify(Notify.ErrorMessage("Need permissions for storage", "Open settings", errHandler))
+    }
+
+    fun executePendingAction() {
         val pendingAction = currentState.pendingAction ?: return
         startForResult(pendingAction)
     }
 
     fun handleUploadPhoto(inputStream: InputStream?) {
-        inputStream ?: return // or show error notification
+        inputStream ?: return //or show error notification
 
-        launchSafety(
-                compHandler = { updateState { it.copy(pendingAction = null) } }
-        ) {
-            val byteArray = withContext(Dispatchers.IO) { inputStream.use { input -> input.readBytes() } }
-            val mediaType = "image/jpeg".toMediaType()
-            val reqFile: RequestBody = byteArray.toRequestBody(mediaType)
-            val body: MultipartBody.Part = MultipartBody.Part.createFormData("avatar", "name.jpg", reqFile)
+        launchSafety(null, { updateState { it.copy(pendingAction = null) } }) {
+            //read file stream on background thread (IO)
+            val byteArray =
+                    withContext(Dispatchers.IO) { inputStream.use { input -> input.readBytes() } }
+
+            val reqFile: RequestBody = byteArray.toRequestBody("image/jpeg".toMediaType())
+            val body: MultipartBody.Part =
+                    MultipartBody.Part.createFormData("avatar", "name.jpg", reqFile)
             repository.uploadAvatar(body)
         }
     }
@@ -131,7 +118,7 @@ class ProfileViewModel(handle: SavedStateHandle) :
     }
 
     fun handleDeleteAction() {
-        // todo remove avatar on server
+        //TODO remove avatar on server
     }
 
     fun handleGalleryAction() {
@@ -175,7 +162,6 @@ sealed class PendingAction : Parcelable {
     data class CameraAction(override val payload: Uri) : PendingAction()
 
     data class EditAction(override val payload: Pair<Uri, Uri>) : PendingAction(), Parcelable {
-
         constructor(parcel: Parcel) : this(Uri.parse(parcel.readString()) to Uri.parse(parcel.readString()))
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -183,7 +169,9 @@ sealed class PendingAction : Parcelable {
             parcel.writeString(payload.second.toString())
         }
 
-        override fun describeContents(): Int = 0
+        override fun describeContents(): Int {
+            return 0
+        }
 
         companion object CREATOR : Parcelable.Creator<EditAction> {
             override fun createFromParcel(parcel: Parcel): EditAction {
